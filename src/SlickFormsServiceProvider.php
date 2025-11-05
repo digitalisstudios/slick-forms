@@ -218,6 +218,7 @@ class SlickFormsServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 \DigitalisStudios\SlickForms\Console\Commands\ExportSchemasCommand::class,
+                \DigitalisStudios\SlickForms\Console\Commands\InstallSlickFormsCommand::class,
             ]);
         }
     }

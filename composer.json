@@ -45,7 +45,10 @@
             "DigitalisStudios\\SlickForms\\": "src/",
             "DigitalisStudios\\SlickForms\\Database\\Seeders\\": "database/seeders/",
             "DigitalisStudios\\SlickForms\\Database\\Factories\\": "database/factories/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

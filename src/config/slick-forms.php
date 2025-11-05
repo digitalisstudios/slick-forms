@@ -476,4 +476,40 @@ return [
         'queue' => env('SLICK_FORMS_WEBHOOK_QUEUE', true),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Feature Flags (V2.1)
+    |--------------------------------------------------------------------------
+    |
+    | Control which optional features are installed and enabled. Features can
+    | be selectively installed during setup to reduce database tables and
+    | dependencies. All features default to true for backward compatibility.
+    |
+    */
+
+    'features' => [
+        'analytics' => env('SLICK_FORMS_FEATURE_ANALYTICS', true),
+        'webhooks' => env('SLICK_FORMS_FEATURE_WEBHOOKS', true),
+        'spam_logs' => env('SLICK_FORMS_FEATURE_SPAM_LOGS', true),
+        'email_notifications' => env('SLICK_FORMS_FEATURE_EMAIL_NOTIFICATIONS', true),
+        'versioning' => env('SLICK_FORMS_FEATURE_VERSIONING', true),
+        'exports' => env('SLICK_FORMS_FEATURE_EXPORTS', true),
+        'qr_codes' => env('SLICK_FORMS_FEATURE_QR_CODES', true),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Installation (V2.1)
+    |--------------------------------------------------------------------------
+    |
+    | Configure the installation wizard behavior when running
+    | php artisan slick-forms:install
+    |
+    */
+
+    'installation' => [
+        'wizard_enabled' => true,
+        'auto_install_dependencies' => false,
+    ],
+
 ];
