@@ -28,13 +28,13 @@
     "require": {
         "php": "^8.2",
         "livewire/livewire": "^3.0",
-        "hashids/hashids": "^5.0",
-        "simplesoftwareio/simple-qrcode": "^4.2"
+        "hashids/hashids": "^5.0"
     },
     "suggest": {
         "illuminate/support": "Laravel framework support package (^11.0|^12.0)",
-        "maatwebsite/excel": "Required for CSV and Excel export functionality (^3.1)",
-        "barryvdh/laravel-dompdf": "Required for PDF export functionality (^3.1)"
+        "maatwebsite/excel": "Required for Excel export functionality (^3.1)",
+        "barryvdh/laravel-dompdf": "Required for PDF export functionality (^3.1)",
+        "simplesoftwareio/simple-qrcode": "Required for QR code generation (^4.2)"
     },
     "require-dev": {
         "orchestra/testbench": "^9.0",

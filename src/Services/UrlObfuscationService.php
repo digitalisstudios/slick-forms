@@ -228,13 +228,26 @@ class UrlObfuscationService
     }
 
     /**
+     * Check if QR code generation is available (feature enabled AND package installed)
+     */
+    public function canGenerateQrCode(): bool
+    {
+        return slick_forms_feature_enabled('qr_codes')
+            && class_exists(\SimpleSoftwareIO\QrCode\Facades\QrCode::class);
+    }
+
+    /**
      * Generate QR code image for form URL
      *
      * @param  string  $url  Form URL to encode
-     * @return string QR code image data (SVG format)
+     * @return string|null QR code image data (SVG format) or null if package not available
      */
-    public function generateQrCode(string $url): string
+    public function generateQrCode(string $url): ?string
     {
+        if (! $this->canGenerateQrCode()) {
+            return null;
+        }
+
         return QrCode::size(300)
             ->format('svg')
             ->generate($url);
