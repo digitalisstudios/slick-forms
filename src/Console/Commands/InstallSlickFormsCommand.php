@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Schema;
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\info;
 use function Laravel\Prompts\multisearch;
+use function Laravel\Prompts\note;
 use function Laravel\Prompts\warning;
 
 class InstallSlickFormsCommand extends Command
@@ -158,19 +159,83 @@ class InstallSlickFormsCommand extends Command
             $selectedFeatures[$feature] = in_array($feature, $selected);
         }
 
-        // Show what was selected for debugging
-        $enabledCount = count(array_filter($selectedFeatures));
-        if ($enabledCount > 0) {
-            $this->newLine();
-            $this->line("<info>You selected {$enabledCount} feature(s): ".implode(', ', array_keys(array_filter($selectedFeatures))).'</info>');
-            $this->newLine();
-        } else {
-            $this->newLine();
-            $this->line('<comment>No features selected. Only core tables will be installed.</comment>');
-            $this->newLine();
+        // Show selection summary and confirm
+        $this->displaySelectionSummary($selectedFeatures);
+
+        $confirmed = confirm(
+            label: 'Proceed with installation?',
+            default: true,
+            yes: 'Yes, install now',
+            no: 'No, cancel',
+            hint: 'Review your selection above before confirming.'
+        );
+
+        if (! $confirmed) {
+            info('Installation cancelled.');
+            exit(0);
         }
 
         return $selectedFeatures;
+    }
+
+    /**
+     * Display a summary of selected features
+     */
+    protected function displaySelectionSummary(array $selectedFeatures): void
+    {
+        $this->newLine();
+
+        $enabledMigrationFeatures = array_filter(array_intersect_key($selectedFeatures, $this->featureMigrations));
+        $enabledDependencyFeatures = array_filter(array_intersect_key($selectedFeatures, $this->featureDependencies));
+
+        // Calculate total tables
+        $totalTables = 9; // Core tables
+        foreach ($enabledMigrationFeatures as $feature => $enabled) {
+            if ($enabled) {
+                $totalTables += $this->featureMigrations[$feature]['tables'];
+            }
+        }
+
+        // Build summary
+        $summary = [];
+        $summary[] = '┌─────────────────────────────────────────────────────┐';
+        $summary[] = '│          INSTALLATION SUMMARY                       │';
+        $summary[] = '└─────────────────────────────────────────────────────┘';
+        $summary[] = '';
+        $summary[] = 'Core: 9 tables (always installed)';
+
+        if (! empty($enabledMigrationFeatures)) {
+            $summary[] = '';
+            $summary[] = 'Features with migrations:';
+            foreach ($enabledMigrationFeatures as $feature => $enabled) {
+                if ($enabled) {
+                    $config = $this->featureMigrations[$feature];
+                    $summary[] = "  ✓ {$feature} ({$config['tables']} tables)";
+                }
+            }
+        }
+
+        if (! empty($enabledDependencyFeatures)) {
+            $summary[] = '';
+            $summary[] = 'Features with dependencies:';
+            foreach ($enabledDependencyFeatures as $feature => $enabled) {
+                if ($enabled) {
+                    $summary[] = "  ✓ {$feature}";
+                }
+            }
+        }
+
+        if (empty($enabledMigrationFeatures) && empty($enabledDependencyFeatures)) {
+            $summary[] = '';
+            $summary[] = 'No additional features selected.';
+        }
+
+        $summary[] = '';
+        $summary[] = "Total database tables: {$totalTables}";
+        $summary[] = '';
+
+        note(implode("\n", $summary));
+        $this->newLine();
     }
 
     /**
