@@ -1,0 +1,21 @@
+/* SlickForms FormBuilder - Third-Party Library Customizations */
+/* Custom styling for Ace Editor and Quill WYSIWYG editor */
+
+/* Ace Editor custom styling */
+.ace-editor-container {
+    height: 400px;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    font-size: 14px;
+}
+
+/* Quill editor styling */
+.ql-toolbar.ql-snow {
+    border-top-left-radius: 0.375rem;
+    border-top-right-radius: 0.375rem;
+}
+
+.ql-container.ql-snow {
+    border-bottom-left-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+}

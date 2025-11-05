@@ -1,0 +1,534 @@
+/* SlickForms FormBuilder Styles */
+/* Extracted from inline styles for better performance and maintainability */
+
+/* Loading Spinner - shown state */
+#properties-spinner.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transition: opacity 0.3s ease-out, visibility 0s linear 0s !important;
+}
+
+/* CSS Containing Block Hack - forces position:fixed to be relative to this container */
+.slick-forms-builder-wrapper {
+    /* transform creates a new containing block for fixed positioning */
+    /* This allows fixed sidebars/panels to work even when builder is embedded */
+}
+
+/* Builder Header Bar (inside wrapper) */
+.builder-internal-header {
+    height: 60px;
+    background: white;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1.5rem;
+    z-index: 1200;
+    flex-shrink: 0;
+}
+
+/* Header container - mimics Bootstrap .container behavior */
+.header-container {
+    width: 100%;
+    max-width: 1320px;
+    margin: 0 auto;
+}
+
+/* Editable Form Name Input */
+.form-name-input {
+    transition: all 0.2s ease;
+}
+
+.form-name-input:hover {
+    background: #f8f9fa !important;
+    border-radius: 0.375rem;
+}
+
+.form-name-input:focus {
+    background: white !important;
+    border: 1px solid #0d6efd !important;
+    border-radius: 0.375rem;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* ==================== Fixed 3-Panel Layout ==================== */
+.builder-layout {
+    display: flex;
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Left Sidebar (Field Palette) */
+.builder-sidebar {
+    position: fixed;
+    left: 0;
+    top: 60px;
+    bottom: 0;
+    width: 290px;
+    background: white;
+    border-right: 1px solid #dee2e6;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 1000;
+    transition: width 0.3s ease;
+}
+
+.builder-sidebar.collapsed {
+    width: 50px;
+}
+
+/* Canvas (Center) */
+.builder-canvas {
+    position: fixed;
+    left: 290px; /* Default: left sidebar width */
+    right: 0;
+    top: 60px;
+    bottom: 0;
+    overflow-y: auto;
+    overflow-x: auto;
+    padding: 1rem;
+    transition: left 0.3s ease, right 0.3s ease;
+    display: block;
+}
+
+.builder-canvas.sidebar-collapsed {
+    left: 50px;
+}
+
+/* Viewport wrapper for responsive preview */
+.viewport-wrapper {
+    width: 100%;
+    transition: all 0.3s ease;
+    margin: 0 auto;
+    container-type: inline-size;
+    container-name: viewport;
+    overflow: auto;
+}
+
+.viewport-wrapper.viewport-mobile {
+    max-width: 375px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    background: white;
+    padding: 1rem;
+}
+
+.viewport-wrapper.viewport-tablet {
+    max-width: 768px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    background: white;
+    padding: 1rem;
+}
+
+.viewport-wrapper.viewport-desktop {
+    max-width: 100%;
+    min-width: 1140px; /* Bootstrap container max-width */
+}
+
+/* Force mobile behavior in mobile viewport - reset all larger breakpoint classes */
+.viewport-wrapper.viewport-mobile .col-sm-1, .viewport-wrapper.viewport-mobile .col-sm-2,
+.viewport-wrapper.viewport-mobile .col-sm-3, .viewport-wrapper.viewport-mobile .col-sm-4,
+.viewport-wrapper.viewport-mobile .col-sm-5, .viewport-wrapper.viewport-mobile .col-sm-6,
+.viewport-wrapper.viewport-mobile .col-sm-7, .viewport-wrapper.viewport-mobile .col-sm-8,
+.viewport-wrapper.viewport-mobile .col-sm-9, .viewport-wrapper.viewport-mobile .col-sm-10,
+.viewport-wrapper.viewport-mobile .col-sm-11, .viewport-wrapper.viewport-mobile .col-sm-12,
+.viewport-wrapper.viewport-mobile .col-md-1, .viewport-wrapper.viewport-mobile .col-md-2,
+.viewport-wrapper.viewport-mobile .col-md-3, .viewport-wrapper.viewport-mobile .col-md-4,
+.viewport-wrapper.viewport-mobile .col-md-5, .viewport-wrapper.viewport-mobile .col-md-6,
+.viewport-wrapper.viewport-mobile .col-md-7, .viewport-wrapper.viewport-mobile .col-md-8,
+.viewport-wrapper.viewport-mobile .col-md-9, .viewport-wrapper.viewport-mobile .col-md-10,
+.viewport-wrapper.viewport-mobile .col-md-11, .viewport-wrapper.viewport-mobile .col-md-12,
+.viewport-wrapper.viewport-mobile .col-lg-1, .viewport-wrapper.viewport-mobile .col-lg-2,
+.viewport-wrapper.viewport-mobile .col-lg-3, .viewport-wrapper.viewport-mobile .col-lg-4,
+.viewport-wrapper.viewport-mobile .col-lg-5, .viewport-wrapper.viewport-mobile .col-lg-6,
+.viewport-wrapper.viewport-mobile .col-lg-7, .viewport-wrapper.viewport-mobile .col-lg-8,
+.viewport-wrapper.viewport-mobile .col-lg-9, .viewport-wrapper.viewport-mobile .col-lg-10,
+.viewport-wrapper.viewport-mobile .col-lg-11, .viewport-wrapper.viewport-mobile .col-lg-12,
+.viewport-wrapper.viewport-mobile .col-xl-1, .viewport-wrapper.viewport-mobile .col-xl-2,
+.viewport-wrapper.viewport-mobile .col-xl-3, .viewport-wrapper.viewport-mobile .col-xl-4,
+.viewport-wrapper.viewport-mobile .col-xl-5, .viewport-wrapper.viewport-mobile .col-xl-6,
+.viewport-wrapper.viewport-mobile .col-xl-7, .viewport-wrapper.viewport-mobile .col-xl-8,
+.viewport-wrapper.viewport-mobile .col-xl-9, .viewport-wrapper.viewport-mobile .col-xl-10,
+.viewport-wrapper.viewport-mobile .col-xl-11, .viewport-wrapper.viewport-mobile .col-xl-12,
+.viewport-wrapper.viewport-mobile .col-xxl-1, .viewport-wrapper.viewport-mobile .col-xxl-2,
+.viewport-wrapper.viewport-mobile .col-xxl-3, .viewport-wrapper.viewport-mobile .col-xxl-4,
+.viewport-wrapper.viewport-mobile .col-xxl-5, .viewport-wrapper.viewport-mobile .col-xxl-6,
+.viewport-wrapper.viewport-mobile .col-xxl-7, .viewport-wrapper.viewport-mobile .col-xxl-8,
+.viewport-wrapper.viewport-mobile .col-xxl-9, .viewport-wrapper.viewport-mobile .col-xxl-10,
+.viewport-wrapper.viewport-mobile .col-xxl-11, .viewport-wrapper.viewport-mobile .col-xxl-12 {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+}
+
+/* Allow xs column classes to work in mobile viewport */
+.viewport-wrapper.viewport-mobile .col-1 { flex: 0 0 auto !important; width: 8.33333333% !important; }
+.viewport-wrapper.viewport-mobile .col-2 { flex: 0 0 auto !important; width: 16.66666667% !important; }
+.viewport-wrapper.viewport-mobile .col-3 { flex: 0 0 auto !important; width: 25% !important; }
+.viewport-wrapper.viewport-mobile .col-4 { flex: 0 0 auto !important; width: 33.33333333% !important; }
+.viewport-wrapper.viewport-mobile .col-5 { flex: 0 0 auto !important; width: 41.66666667% !important; }
+.viewport-wrapper.viewport-mobile .col-6 { flex: 0 0 auto !important; width: 50% !important; }
+.viewport-wrapper.viewport-mobile .col-7 { flex: 0 0 auto !important; width: 58.33333333% !important; }
+.viewport-wrapper.viewport-mobile .col-8 { flex: 0 0 auto !important; width: 66.66666667% !important; }
+.viewport-wrapper.viewport-mobile .col-9 { flex: 0 0 auto !important; width: 75% !important; }
+.viewport-wrapper.viewport-mobile .col-10 { flex: 0 0 auto !important; width: 83.33333333% !important; }
+.viewport-wrapper.viewport-mobile .col-11 { flex: 0 0 auto !important; width: 91.66666667% !important; }
+.viewport-wrapper.viewport-mobile .col-12 { flex: 0 0 auto !important; width: 100% !important; }
+
+/* Properties Panel (Right Slideout) */
+.builder-properties {
+    position: fixed;
+    right: 0;
+    top: 60px;
+    bottom: 0;
+    width: 450px;
+    background: white;
+    border-left: 1px solid #dee2e6;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 1300; /* Above header (1200) */
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+    min-width: 300px;
+    max-width: 50vw;
+}
+
+.builder-properties > .card {
+    border: none;
+}
+
+/* Resize Handle for Properties Panel */
+.properties-resize-handle {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 8px;
+    cursor: col-resize;
+    background: transparent;
+    z-index: 10;
+    transition: background-color 0.2s;
+}
+
+.properties-resize-handle:hover,
+.properties-resize-handle.resizing {
+    background: linear-gradient(90deg, rgba(13, 110, 253, 0.1) 0%, rgba(13, 110, 253, 0.3) 50%, rgba(13, 110, 253, 0.1) 100%);
+}
+
+.properties-resize-handle::after {
+    content: '';
+    position: absolute;
+    left: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2px;
+    height: 40px;
+    background: #dee2e6;
+    border-radius: 1px;
+}
+
+.properties-resize-handle:hover::after,
+.properties-resize-handle.resizing::after {
+    background: #0d6efd;
+}
+
+@media (max-width: 992px) {
+    .builder-sidebar {
+        width: 250px;
+    }
+
+    .builder-canvas {
+        margin-left: 0;
+    }
+
+    .builder-properties {
+        width: 90%;
+        max-width: 400px;
+    }
+}
+
+/* Custom Scrollbar for Panels */
+.builder-sidebar::-webkit-scrollbar,
+.builder-properties::-webkit-scrollbar,
+.builder-canvas::-webkit-scrollbar {
+    width: 8px;
+}
+
+.builder-sidebar::-webkit-scrollbar-track,
+.builder-properties::-webkit-scrollbar-track,
+.builder-canvas::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.builder-sidebar::-webkit-scrollbar-thumb,
+.builder-properties::-webkit-scrollbar-thumb,
+.builder-canvas::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.builder-sidebar::-webkit-scrollbar-thumb:hover,
+.builder-properties::-webkit-scrollbar-thumb:hover,
+.builder-canvas::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* ==================== End Fixed Layout Styles ==================== */
+
+/* Layout element hover effects - only if no children are hovered */
+.element-wrapper:hover:not(:has(.element-wrapper:hover, .field-wrapper:hover)) {
+    border-color: #6c757d !important;
+}
+
+.element-wrapper.selected {
+    border-color: #198754 !important;
+}
+
+/* Field hover effects - only if no children are hovered */
+.field-wrapper:hover:not(:has(.element-wrapper:hover, .field-wrapper:hover)) {
+    border-color: #6c757d !important;
+}
+
+.field-wrapper.border-primary {
+    border-color: #0d6efd !important;
+}
+
+/* Prevent nested hover issues */
+.sortable-container {
+    position: relative;
+}
+
+/* Apply min-height to sortable containers only during drag */
+.drag-active .sortable-container {
+    min-height: 60px;
+}
+
+/* CSS-only hover states for controls */
+.element-controls,
+.field-controls {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s, visibility 0s linear 0.2s;
+}
+
+/* Show controls on hover ONLY if no children are being hovered */
+.element-wrapper:hover:not(:has(.element-wrapper:hover, .field-wrapper:hover)) > .element-controls,
+.field-wrapper:hover:not(:has(.element-wrapper:hover, .field-wrapper:hover)) > .field-controls {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.2s, visibility 0s;
+}
+
+/* Keep controls visible when selected */
+.element-wrapper.selected > .element-controls,
+.field-wrapper.border-primary > .field-controls {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Tab delete button hover effect */
+.tab-delete-btn {
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.nav-item:hover .tab-delete-btn {
+    opacity: 1 !important;
+}
+
+/* Drag and drop styling */
+.sortable-ghost {
+    opacity: 0.4;
+}
+
+.sortable-drag {
+    opacity: 1 !important;
+}
+
+/* Cursor feedback for draggable items */
+[data-type="new-field"]:active,
+[data-type="new-element"]:active {
+    cursor: grabbing !important;
+}
+
+/* Delete button styling */
+.element-controls .btn-outline-danger,
+.field-controls .btn-outline-danger {
+    background-color: white;
+    border-color: #dee2e6;
+}
+
+/* Delete button hover effects */
+.element-controls .btn-outline-danger:hover,
+.field-controls .btn-outline-danger:hover {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+    color: white !important;
+}
+
+.element-controls .btn-outline-danger:hover i,
+.field-controls .btn-outline-danger:hover i {
+    color: white !important;
+}
+
+.tab-delete-btn:hover,
+.accordion-item .btn-danger:hover {
+    background-color: #bb2d3b !important;
+    border-color: #bb2d3b !important;
+}
+
+.tab-delete-btn:hover i,
+.accordion-item .btn-danger:hover i {
+    color: white !important;
+}
+
+/* Left sidebar accordion styling */
+#builderSidebar .accordion-button.collapsed {
+    background-color: #e9ecef;
+    font-weight: 500;
+}
+
+#builderSidebar .accordion-button:not(.collapsed) {
+    background-color: #495057;
+    color: white;
+    font-weight: 500;
+}
+
+#builderSidebar .accordion-button:not(.collapsed)::after {
+    filter: brightness(0) invert(1);
+}
+
+#builderSidebar .list-group-item {
+    background-color: white;
+}
+
+/* Hide placeholder text in preview mode */
+.placeholder-text {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Page drag handle styling */
+.page-drag-handle {
+    opacity: 0.4;
+    transition: opacity 0.2s ease;
+    padding: 0.25rem;
+}
+
+.page-drag-handle:hover {
+    opacity: 1;
+}
+
+.page-drag-handle:active {
+    cursor: grabbing !important;
+}
+
+/* Prevent text selection while dragging */
+.sortable-drag .page-drag-handle {
+    cursor: grabbing !important;
+}
+
+/* Page tab controls inside tab */
+.nav-link.d-flex {
+    padding: 0.5rem 0.75rem;
+}
+
+.nav-link.d-flex .btn-link {
+    border: none;
+    box-shadow: none !important;
+}
+
+.nav-link.d-flex .btn-link:hover {
+    background: none;
+}
+
+/* Ensure active tab text color is correct */
+.nav-link.active .btn-link {
+    color: var(--bs-nav-tabs-link-active-color, #495057) !important;
+}
+
+/* Page list item being dragged */
+.nav-item.sortable-ghost {
+    opacity: 0.4;
+}
+
+.nav-item.sortable-drag {
+    opacity: 0.8;
+}
+
+/* Custom Icon Picker Styling */
+.icon-picker-dropdown {
+    position: absolute;
+    z-index: 1050;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    max-width: 400px;
+}
+
+.icon-picker-search {
+    padding: 0.75rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.icon-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 0.5rem;
+    padding: 0.75rem;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.icon-picker-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1.25rem;
+}
+
+.icon-picker-item:hover {
+    background: #e9ecef;
+    border-color: #0d6efd;
+}
+
+.icon-picker-item.selected {
+    background: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+}
+
+/* Field highlight animation */
+@keyframes fieldHighlight {
+    0% {
+        box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.7);
+        border-color: #0d6efd;
+    }
+    50% {
+        box-shadow: 0 0 20px 10px rgba(13, 110, 253, 0.3);
+        border-color: #0d6efd;
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(13, 110, 253, 0);
+        border-color: inherit;
+    }
+}
+
+.field-highlight {
+    animation: fieldHighlight 2s ease-in-out;
+}
+
+/* Make disabled form elements non-interactive so clicks pass through to wrapper */
+.field-wrapper input:disabled,
+.field-wrapper select:disabled,
+.field-wrapper textarea:disabled,
+.field-wrapper .form-control:disabled,
+.field-wrapper .form-select:disabled {
+    pointer-events: none;
+}

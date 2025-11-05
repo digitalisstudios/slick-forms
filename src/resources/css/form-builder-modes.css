@@ -1,0 +1,46 @@
+/* SlickForms FormBuilder - Preview and Picker Mode Styles */
+/* Loaded conditionally when preview or picker mode is active */
+
+/* ==================== Preview Mode Styles ==================== */
+/* Applied when data-preview-mode="true" */
+
+[data-preview-mode="true"] .builder-canvas .placeholder-text {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Hide table row controls in preview mode */
+[data-preview-mode="true"] .builder-canvas .row-controls-cell {
+    display: none !important;
+}
+
+/* Hide cell type badges in preview mode */
+[data-preview-mode="true"] .builder-canvas .table-cell-builder .badge {
+    display: none !important;
+}
+
+/* Hide delete column buttons in preview mode */
+[data-preview-mode="true"] .builder-canvas .table-cell-builder .btn-outline-danger {
+    display: none !important;
+}
+
+/* ==================== Picker Mode Styles ==================== */
+/* Applied when data-picker-mode="true" */
+
+/* Picker mode cursor */
+[data-picker-mode="true"] .field-wrapper {
+    cursor: crosshair !important;
+}
+
+/* Highlight pickable fields */
+[data-picker-mode="true"] .field-wrapper:hover {
+    background-color: rgba(25, 135, 84, 0.1) !important;
+    border-color: #198754 !important;
+}
+
+/* Disable editing controls during picker mode */
+[data-picker-mode="true"] .element-controls,
+[data-picker-mode="true"] .field-controls {
+    pointer-events: none !important;
+    opacity: 0 !important;
+}

@@ -1,0 +1,66 @@
+{
+    "name": "digitalisstudios/slick-forms",
+    "description": "A comprehensive Laravel package for building dynamic forms with an intuitive drag-and-drop interface, conditional logic, and 32 field types including searchable selects, drag-drop file uploads, and password strength indicators",
+    "type": "library",
+    "keywords": [
+        "laravel",
+        "forms",
+        "form-builder",
+        "livewire",
+        "dynamic-forms",
+        "conditional-logic",
+        "drag-drop",
+        "bootstrap",
+        "form-submissions"
+    ],
+    "license": "MIT",
+    "homepage": "https://github.com/digitalisstudios/slick-forms",
+    "support": {
+        "issues": "https://github.com/digitalisstudios/slick-forms/issues",
+        "source": "https://github.com/digitalisstudios/slick-forms"
+    },
+    "authors": [
+        {
+            "name": "Brandon Moore",
+            "email": "brandon@digitalisstudios.com"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "livewire/livewire": "^3.0",
+        "hashids/hashids": "^5.0",
+        "simplesoftwareio/simple-qrcode": "^4.2"
+    },
+    "suggest": {
+        "illuminate/support": "Laravel framework support package (^11.0|^12.0)",
+        "maatwebsite/excel": "Required for CSV and Excel export functionality (^3.1)",
+        "barryvdh/laravel-dompdf": "Required for PDF export functionality (^3.1)"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0",
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "DigitalisStudios\\SlickForms\\": "src/",
+            "DigitalisStudios\\SlickForms\\Database\\Seeders\\": "database/seeders/",
+            "DigitalisStudios\\SlickForms\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DigitalisStudios\\SlickForms\\Tests\\": "tests/",
+            "DigitalisStudios\\SlickForms\\Database\\Seeders\\": "database/seeders/",
+            "DigitalisStudios\\SlickForms\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "DigitalisStudios\\SlickForms\\SlickFormsServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

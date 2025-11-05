@@ -1,0 +1,384 @@
+{
+    "metadata": {
+        "type": "tabs",
+        "label": "Tabs",
+        "icon": "bi-folder",
+        "description": ""
+    },
+    "usage": {
+        "model": "SlickFormLayoutElement",
+        "method": "create",
+        "example": {
+            "slick_form_id": 1,
+            "element_type": "tabs",
+            "element_id": "profile-tabs",
+            "order": 0,
+            "settings": {
+                "tab_style": "nav-tabs",
+                "tab_alignment": "justify-content-center",
+                "tab_fill": false,
+                "default_active_tab": 0,
+                "fade_animation": true
+            }
+        }
+    },
+    "properties": {
+        "slick_form_id": {
+            "type": "integer",
+            "required": true,
+            "storage": "column",
+            "description": "The form this element belongs to"
+        },
+        "slick_form_page_id": {
+            "type": "integer",
+            "required": false,
+            "storage": "column",
+            "description": "The page this element belongs to (for multi-page forms)"
+        },
+        "parent_id": {
+            "type": "integer",
+            "required": false,
+            "storage": "column",
+            "description": "Parent element ID for nesting (null = top-level)"
+        },
+        "element_type": {
+            "type": "string",
+            "required": true,
+            "storage": "column",
+            "value": "tabs",
+            "description": "Must be 'tabs' for this element type"
+        },
+        "order": {
+            "type": "integer",
+            "required": true,
+            "storage": "column",
+            "description": "Display order among siblings"
+        },
+        "settings": {
+            "type": "mixed",
+            "storage": "column",
+            "description": ""
+        },
+        "conditional_logic": {
+            "type": "object",
+            "required": false,
+            "storage": "json_column",
+            "description": "Visibility rules (same structure as field conditional logic)"
+        },
+        "element_id": {
+            "type": "text",
+            "required": true,
+            "storage": "column",
+            "default": null,
+            "description": "Unique HTML id attribute (letters, numbers, hyphens, underscores)",
+            "tab": "basic"
+        },
+        "class": {
+            "type": "text",
+            "required": false,
+            "storage": "column",
+            "default": null,
+            "description": "Space-separated CSS class names",
+            "tab": "style"
+        },
+        "style": {
+            "type": "select",
+            "required": false,
+            "storage": "json_column",
+            "default": "nav-tabs",
+            "description": "Tab Style",
+            "options": [
+                "Tabs (default)",
+                "Pills",
+                "Underline"
+            ],
+            "options_labels": {
+                "nav-tabs": "Tabs (default)",
+                "nav-pills": "Pills",
+                "nav-underline": "Underline"
+            },
+            "tab": "settings"
+        },
+        "spacing.margin_top": {
+            "type": "select",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "Margin Top",
+            "options": [
+                "None",
+                "0",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "Auto"
+            ],
+            "options_labels": {
+                "": "None",
+                "0": "0",
+                "1": "1",
+                "2": "2",
+                "3": "3",
+                "4": "4",
+                "5": "5",
+                "auto": "Auto"
+            },
+            "tab": "style"
+        },
+        "spacing.margin_bottom": {
+            "type": "select",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "Margin Bottom",
+            "options": [
+                "None",
+                "0",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "Auto"
+            ],
+            "options_labels": {
+                "": "None",
+                "0": "0",
+                "1": "1",
+                "2": "2",
+                "3": "3",
+                "4": "4",
+                "5": "5",
+                "auto": "Auto"
+            },
+            "tab": "style"
+        },
+        "spacing.padding_top": {
+            "type": "select",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "Padding Top",
+            "options": [
+                "None",
+                "0",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5"
+            ],
+            "options_labels": {
+                "": "None",
+                "0": "0",
+                "1": "1",
+                "2": "2",
+                "3": "3",
+                "4": "4",
+                "5": "5"
+            },
+            "tab": "style"
+        },
+        "spacing.padding_bottom": {
+            "type": "select",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "Padding Bottom",
+            "options": [
+                "None",
+                "0",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5"
+            ],
+            "options_labels": {
+                "": "None",
+                "0": "0",
+                "1": "1",
+                "2": "2",
+                "3": "3",
+                "4": "4",
+                "5": "5"
+            },
+            "tab": "style"
+        },
+        "display.display": {
+            "type": "select",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "Display (XS)",
+            "options": [
+                "Default",
+                "Hide",
+                "Block",
+                "Inline",
+                "Inline Block",
+                "Flex"
+            ],
+            "options_labels": {
+                "": "Default",
+                "none": "Hide",
+                "block": "Block",
+                "inline": "Inline",
+                "inline-block": "Inline Block",
+                "flex": "Flex"
+            },
+            "tab": "style"
+        },
+        "display.display_sm": {
+            "type": "select",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "Display (SM)",
+            "options": [
+                "Default",
+                "Hide",
+                "Block",
+                "Inline",
+                "Inline Block",
+                "Flex"
+            ],
+            "options_labels": {
+                "": "Default",
+                "none": "Hide",
+                "block": "Block",
+                "inline": "Inline",
+                "inline-block": "Inline Block",
+                "flex": "Flex"
+            },
+            "tab": "style"
+        },
+        "display.display_md": {
+            "type": "select",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "Display (MD)",
+            "options": [
+                "Default",
+                "Hide",
+                "Block",
+                "Inline",
+                "Inline Block",
+                "Flex"
+            ],
+            "options_labels": {
+                "": "Default",
+                "none": "Hide",
+                "block": "Block",
+                "inline": "Inline",
+                "inline-block": "Inline Block",
+                "flex": "Flex"
+            },
+            "tab": "style"
+        },
+        "text_alignment.align": {
+            "type": "select",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "Text Alignment",
+            "options": [
+                "Default",
+                "Start (Left)",
+                "Center",
+                "End (Right)"
+            ],
+            "options_labels": {
+                "": "Default",
+                "start": "Start (Left)",
+                "center": "Center",
+                "end": "End (Right)"
+            },
+            "tab": "style"
+        },
+        "alignment": {
+            "type": "select",
+            "required": false,
+            "storage": "json_column",
+            "default": "",
+            "description": "Tab Alignment",
+            "options": [
+                "Left (default)",
+                "Center",
+                "Right"
+            ],
+            "options_labels": {
+                "": "Left (default)",
+                "justify-content-center": "Center",
+                "justify-content-end": "Right"
+            },
+            "tab": "settings"
+        },
+        "fill": {
+            "type": "select",
+            "required": false,
+            "storage": "json_column",
+            "default": "false",
+            "description": "Tab Width",
+            "options": [
+                "Auto",
+                "Fill (proportional)",
+                "Justified (equal width)"
+            ],
+            "options_labels": {
+                "false": "Auto",
+                "nav-fill": "Fill (proportional)",
+                "nav-justified": "Justified (equal width)"
+            },
+            "tab": "settings"
+        },
+        "default_active_tab": {
+            "type": "number",
+            "required": false,
+            "storage": "json_column",
+            "default": 0,
+            "description": "0 = first tab, 1 = second tab, etc.",
+            "tab": "settings"
+        },
+        "fade": {
+            "type": "switch",
+            "required": false,
+            "storage": "json_column",
+            "default": false,
+            "description": "Enable Fade Animation",
+            "tab": "settings"
+        }
+    },
+    "allowed_children": [
+        "tab"
+    ],
+    "tabs": {
+        "basic": {
+            "label": "Basic",
+            "icon": "bi-info-circle",
+            "order": 10,
+            "view": "auto-generated from schema"
+        },
+        "settings": {
+            "label": "Settings",
+            "icon": "bi-sliders",
+            "order": 20,
+            "view": "auto-generated from schema"
+        },
+        "style": {
+            "label": "Style",
+            "icon": "bi-palette",
+            "order": 30,
+            "view": "auto-generated from schema"
+        },
+        "advanced": {
+            "label": "Visibility",
+            "icon": "bi-eye",
+            "order": 40,
+            "view": "slick-forms::livewire.partials.properties-panel.tabs.advanced"
+        }
+    }
+}

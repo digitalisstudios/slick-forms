@@ -1,0 +1,422 @@
+{
+    "metadata": {
+        "type": "file",
+        "label": "File Upload",
+        "icon": "bi bi-file-earmark-arrow-up",
+        "description": ""
+    },
+    "usage": {
+        "model": "CustomFormField",
+        "method": "create",
+        "example": {
+            "slick_form_id": 1,
+            "field_type": "file",
+            "name": "resume",
+            "label": "Upload Resume",
+            "placeholder": null,
+            "help_text": "Accepted formats: PDF, DOC, DOCX (max 5MB)",
+            "is_required": false,
+            "order": 0,
+            "validation_rules": [
+                "required",
+                "file",
+                "max:5120"
+            ],
+            "options": {
+                "floating_label": true,
+                "field_size": "lg"
+            }
+        }
+    },
+    "properties": {
+        "slick_form_id": {
+            "type": "integer",
+            "required": true,
+            "storage": "column",
+            "description": "The form this field belongs to"
+        },
+        "slick_form_page_id": {
+            "type": "integer",
+            "required": false,
+            "storage": "column",
+            "description": "The page this field belongs to (for multi-page forms)"
+        },
+        "slick_form_layout_element_id": {
+            "type": "integer",
+            "required": false,
+            "storage": "column",
+            "description": "The layout element this field belongs to"
+        },
+        "parent_field_id": {
+            "type": "integer",
+            "required": false,
+            "storage": "column",
+            "description": "Parent field ID (for nested fields like repeater children)"
+        },
+        "field_type": {
+            "type": "string",
+            "required": true,
+            "storage": "column",
+            "value": "file",
+            "description": "Must be 'file' for this field type"
+        },
+        "validation_rules": {
+            "type": "mixed",
+            "storage": "column",
+            "description": ""
+        },
+        "conditional_logic": {
+            "type": "mixed",
+            "storage": "column",
+            "description": ""
+        },
+        "options": {
+            "type": "mixed",
+            "storage": "column",
+            "description": ""
+        },
+        "order": {
+            "type": "integer",
+            "required": true,
+            "storage": "column",
+            "description": "Display order among siblings"
+        },
+        "show_label": {
+            "type": "switch",
+            "required": false,
+            "storage": "column",
+            "default": true,
+            "description": "Show Label",
+            "tab": "basic"
+        },
+        "label": {
+            "type": "text",
+            "required": true,
+            "storage": "column",
+            "default": null,
+            "description": "Label",
+            "tab": "basic"
+        },
+        "label_icon": {
+            "type": "icon_picker",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "Optional icon to display before the label",
+            "tab": "basic"
+        },
+        "name": {
+            "type": "text",
+            "required": true,
+            "storage": "column",
+            "default": null,
+            "description": "Technical identifier for this field (letters, numbers, underscores)",
+            "tab": "basic"
+        },
+        "element_id": {
+            "type": "text",
+            "required": true,
+            "storage": "column",
+            "default": null,
+            "description": "Unique HTML id attribute for this field",
+            "tab": "basic"
+        },
+        "placeholder": {
+            "type": "text",
+            "required": false,
+            "storage": "column",
+            "default": null,
+            "description": "Placeholder",
+            "tab": "basic"
+        },
+        "help_text_as_popover": {
+            "type": "switch",
+            "required": false,
+            "storage": "column",
+            "default": false,
+            "description": "Display help text as a \"?\" popover instead of below the field",
+            "tab": "basic"
+        },
+        "help_text": {
+            "type": "textarea",
+            "required": false,
+            "storage": "column",
+            "default": null,
+            "description": "Optional help text displayed below the field",
+            "tab": "basic"
+        },
+        "is_required": {
+            "type": "switch",
+            "required": false,
+            "storage": "column",
+            "default": false,
+            "description": "Required",
+            "tab": "validation"
+        },
+        "class": {
+            "type": "text",
+            "required": false,
+            "storage": "column",
+            "default": null,
+            "description": "Custom CSS classes to apply to the field wrapper",
+            "tab": "style"
+        },
+        "style": {
+            "type": "textarea",
+            "required": false,
+            "storage": "column",
+            "default": null,
+            "description": "Custom inline CSS styles (e.g., \"color: red; font-weight: bold;\")",
+            "tab": "style"
+        },
+        "floating_label": {
+            "type": "switch",
+            "required": false,
+            "storage": "json_column",
+            "default": false,
+            "description": "Modern floating label style (Bootstrap 5)",
+            "tab": "options"
+        },
+        "field_size": {
+            "type": "select",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "Control the size of the input field",
+            "options": [
+                "Default",
+                "Small",
+                "Large"
+            ],
+            "options_labels": {
+                "": "Default",
+                "sm": "Small",
+                "lg": "Large"
+            },
+            "tab": "options"
+        },
+        "text_alignment": {
+            "type": "custom",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "UI rendered in custom view, stored in options",
+            "tab": "style"
+        },
+        "spacing": {
+            "type": "custom",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "UI rendered in custom view, stored in options",
+            "tab": "style"
+        },
+        "display": {
+            "type": "custom",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "UI rendered in custom view, stored in options",
+            "tab": "advanced"
+        },
+        "validation_timing": {
+            "type": "select",
+            "required": false,
+            "storage": "json_column",
+            "default": "live",
+            "description": "When should this field be validated?",
+            "options": [
+                "Real-time (as you type)",
+                "On blur (when leaving field)",
+                "On submit only"
+            ],
+            "options_labels": {
+                "live": "Real-time (as you type)",
+                "blur": "On blur (when leaving field)",
+                "submit": "On submit only"
+            },
+            "tab": "validation"
+        },
+        "custom_invalid_feedback": {
+            "type": "text",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "Custom message to show when validation fails",
+            "tab": "validation"
+        },
+        "custom_valid_feedback": {
+            "type": "text",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "Optional message to show when validation passes",
+            "tab": "validation"
+        },
+        "accepted_types": {
+            "type": "text",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "File extensions or MIME types (comma-separated)",
+            "tab": "options"
+        },
+        "max_size": {
+            "type": "number",
+            "required": false,
+            "storage": "json_column",
+            "default": "10240",
+            "description": "Maximum file size in kilobytes (default: 10MB)",
+            "tab": "options"
+        },
+        "multiple": {
+            "type": "switch",
+            "required": false,
+            "storage": "json_column",
+            "default": false,
+            "description": "Allow users to upload multiple files at once",
+            "tab": "options"
+        },
+        "enable_drag_drop": {
+            "type": "switch",
+            "required": false,
+            "storage": "json_column",
+            "default": true,
+            "description": "Allow drag and drop file uploads",
+            "tab": "options"
+        },
+        "show_preview": {
+            "type": "switch",
+            "required": false,
+            "storage": "json_column",
+            "default": true,
+            "description": "Display preview of uploaded files",
+            "tab": "options"
+        }
+    },
+    "validation_rules": {
+        "type": "array",
+        "required": false,
+        "storage": "json_column",
+        "description": "Laravel validation rules",
+        "example": [
+            "mimes",
+            "max",
+            "dimensions"
+        ],
+        "available_rules": {
+            "mimes": {
+                "format": "mimes:{value}",
+                "description": "Allowed MIME Types",
+                "help": "Comma-separated list of allowed file extensions (e.g., pdf,jpg,png)",
+                "value_type": "text",
+                "placeholder": "pdf,doc,docx"
+            },
+            "max": {
+                "format": "max:{value}",
+                "description": "Maximum File Size (KB)",
+                "help": "Maximum file size in kilobytes",
+                "value_type": "number",
+                "placeholder": "10240"
+            },
+            "dimensions": {
+                "format": "dimensions:{value}",
+                "description": "Image Dimensions",
+                "help": "For images only. Format: min_width=100,max_width=1000,min_height=100,max_height=1000",
+                "value_type": "text",
+                "placeholder": "min_width=100,max_width=1000"
+            }
+        }
+    },
+    "conditional_logic": {
+        "type": "object",
+        "required": false,
+        "storage": "json_column",
+        "description": "Visibility and conditional validation rules",
+        "structure": {
+            "action": {
+                "type": "string",
+                "required": true,
+                "options": [
+                    "show",
+                    "hide"
+                ],
+                "description": "Whether to show or hide when conditions are met"
+            },
+            "match": {
+                "type": "string",
+                "required": true,
+                "options": [
+                    "all",
+                    "any"
+                ],
+                "description": "all = AND logic (all conditions must be met), any = OR logic (any condition can be met)"
+            },
+            "conditions": {
+                "type": "array",
+                "description": "Array of condition objects",
+                "structure": {
+                    "target_field_id": {
+                        "type": "integer",
+                        "description": "Database ID of the field to check"
+                    },
+                    "operator": {
+                        "type": "string",
+                        "description": "Comparison operator for this field type",
+                        "options": [
+                            "is_empty",
+                            "is_not_empty"
+                        ]
+                    },
+                    "value": {
+                        "type": "mixed",
+                        "description": "Value to compare against (type depends on operator)"
+                    }
+                }
+            }
+        },
+        "example": {
+            "action": "show",
+            "match": "all",
+            "conditions": [
+                {
+                    "target_field_id": 123,
+                    "operator": "is_empty",
+                    "value": "example_value"
+                }
+            ]
+        }
+    },
+    "tabs": {
+        "basic": {
+            "label": "Basic",
+            "icon": "bi-info-circle",
+            "order": 10,
+            "view": "auto-generated from schema"
+        },
+        "options": {
+            "label": "Options",
+            "icon": "bi-sliders",
+            "order": 20,
+            "view": "auto-generated from schema"
+        },
+        "validation": {
+            "label": "Validation",
+            "icon": "bi-check-circle",
+            "order": 30,
+            "view": "slick-forms::livewire.partials.properties-panel.tabs.validation"
+        },
+        "style": {
+            "label": "Style",
+            "icon": "bi-palette",
+            "order": 40,
+            "view": "slick-forms::livewire.partials.properties-panel.tabs.style"
+        },
+        "advanced": {
+            "label": "Visibility",
+            "icon": "bi-eye",
+            "order": 50,
+            "view": "slick-forms::livewire.partials.properties-panel.tabs.advanced"
+        }
+    }
+}

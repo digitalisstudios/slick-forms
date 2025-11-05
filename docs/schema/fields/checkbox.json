@@ -1,0 +1,536 @@
+{
+    "metadata": {
+        "type": "checkbox",
+        "label": "Checkbox Group",
+        "icon": "bi bi-check-square",
+        "description": ""
+    },
+    "usage": {
+        "model": "CustomFormField",
+        "method": "create",
+        "example": {
+            "slick_form_id": 1,
+            "field_type": "checkbox",
+            "name": "interests",
+            "label": "Interests",
+            "placeholder": null,
+            "help_text": null,
+            "is_required": false,
+            "order": 0,
+            "validation_rules": [],
+            "options": {
+                "floating_label": true,
+                "field_size": "lg",
+                "values": [
+                    {
+                        "label": "Web Development",
+                        "value": "web_dev"
+                    },
+                    {
+                        "label": "Mobile Development",
+                        "value": "mobile_dev"
+                    },
+                    {
+                        "label": "UI/UX Design",
+                        "value": "design"
+                    },
+                    {
+                        "label": "Data Science",
+                        "value": "data_science"
+                    }
+                ]
+            }
+        }
+    },
+    "properties": {
+        "slick_form_id": {
+            "type": "integer",
+            "required": true,
+            "storage": "column",
+            "description": "The form this field belongs to"
+        },
+        "slick_form_page_id": {
+            "type": "integer",
+            "required": false,
+            "storage": "column",
+            "description": "The page this field belongs to (for multi-page forms)"
+        },
+        "slick_form_layout_element_id": {
+            "type": "integer",
+            "required": false,
+            "storage": "column",
+            "description": "The layout element this field belongs to"
+        },
+        "parent_field_id": {
+            "type": "integer",
+            "required": false,
+            "storage": "column",
+            "description": "Parent field ID (for nested fields like repeater children)"
+        },
+        "field_type": {
+            "type": "string",
+            "required": true,
+            "storage": "column",
+            "value": "checkbox",
+            "description": "Must be 'checkbox' for this field type"
+        },
+        "validation_rules": {
+            "type": "mixed",
+            "storage": "column",
+            "description": ""
+        },
+        "conditional_logic": {
+            "type": "mixed",
+            "storage": "column",
+            "description": ""
+        },
+        "options": {
+            "type": "mixed",
+            "storage": "column",
+            "description": ""
+        },
+        "order": {
+            "type": "integer",
+            "required": true,
+            "storage": "column",
+            "description": "Display order among siblings"
+        },
+        "show_label": {
+            "type": "switch",
+            "required": false,
+            "storage": "column",
+            "default": true,
+            "description": "Show Label",
+            "tab": "basic"
+        },
+        "label": {
+            "type": "text",
+            "required": true,
+            "storage": "column",
+            "default": null,
+            "description": "Label",
+            "tab": "basic"
+        },
+        "label_icon": {
+            "type": "icon_picker",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "Optional icon to display before the label",
+            "tab": "basic"
+        },
+        "name": {
+            "type": "text",
+            "required": true,
+            "storage": "column",
+            "default": null,
+            "description": "Technical identifier for this field (letters, numbers, underscores)",
+            "tab": "basic"
+        },
+        "element_id": {
+            "type": "text",
+            "required": true,
+            "storage": "column",
+            "default": null,
+            "description": "Unique HTML id attribute for this field",
+            "tab": "basic"
+        },
+        "placeholder": {
+            "type": "text",
+            "required": false,
+            "storage": "column",
+            "default": null,
+            "description": "Placeholder",
+            "tab": "basic"
+        },
+        "help_text_as_popover": {
+            "type": "switch",
+            "required": false,
+            "storage": "column",
+            "default": false,
+            "description": "Display help text as a \"?\" popover instead of below the field",
+            "tab": "basic"
+        },
+        "help_text": {
+            "type": "textarea",
+            "required": false,
+            "storage": "column",
+            "default": null,
+            "description": "Optional help text displayed below the field",
+            "tab": "basic"
+        },
+        "is_required": {
+            "type": "switch",
+            "required": false,
+            "storage": "column",
+            "default": false,
+            "description": "Required",
+            "tab": "validation"
+        },
+        "class": {
+            "type": "text",
+            "required": false,
+            "storage": "column",
+            "default": null,
+            "description": "Custom CSS classes to apply to the field wrapper",
+            "tab": "style"
+        },
+        "style": {
+            "type": "textarea",
+            "required": false,
+            "storage": "column",
+            "default": null,
+            "description": "Custom inline CSS styles (e.g., \"color: red; font-weight: bold;\")",
+            "tab": "style"
+        },
+        "floating_label": {
+            "type": "switch",
+            "required": false,
+            "storage": "json_column",
+            "default": false,
+            "description": "Modern floating label style (Bootstrap 5)",
+            "tab": "options"
+        },
+        "field_size": {
+            "type": "select",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "Control the size of the input field",
+            "options": [
+                "Default",
+                "Small",
+                "Large"
+            ],
+            "options_labels": {
+                "": "Default",
+                "sm": "Small",
+                "lg": "Large"
+            },
+            "tab": "options"
+        },
+        "text_alignment": {
+            "type": "custom",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "UI rendered in custom view, stored in options",
+            "tab": "style"
+        },
+        "spacing": {
+            "type": "custom",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "UI rendered in custom view, stored in options",
+            "tab": "style"
+        },
+        "display": {
+            "type": "custom",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "UI rendered in custom view, stored in options",
+            "tab": "advanced"
+        },
+        "validation_timing": {
+            "type": "select",
+            "required": false,
+            "storage": "json_column",
+            "default": "live",
+            "description": "When should this field be validated?",
+            "options": [
+                "Real-time (as you type)",
+                "On blur (when leaving field)",
+                "On submit only"
+            ],
+            "options_labels": {
+                "live": "Real-time (as you type)",
+                "blur": "On blur (when leaving field)",
+                "submit": "On submit only"
+            },
+            "tab": "validation"
+        },
+        "custom_invalid_feedback": {
+            "type": "text",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "Custom message to show when validation fails",
+            "tab": "validation"
+        },
+        "custom_valid_feedback": {
+            "type": "text",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "Optional message to show when validation passes",
+            "tab": "validation"
+        },
+        "option_source": {
+            "type": "select",
+            "required": true,
+            "storage": "json_column",
+            "default": "static",
+            "description": "Choose where options come from",
+            "options": [
+                {
+                    "label": "Static (Manual Entry)",
+                    "value": "static"
+                },
+                {
+                    "label": "Dynamic (URL/API)",
+                    "value": "url"
+                },
+                {
+                    "label": "Dynamic (Database Model)",
+                    "value": "model"
+                }
+            ],
+            "options_labels": [
+                {
+                    "label": "Static (Manual Entry)",
+                    "value": "static"
+                },
+                {
+                    "label": "Dynamic (URL/API)",
+                    "value": "url"
+                },
+                {
+                    "label": "Dynamic (Database Model)",
+                    "value": "model"
+                }
+            ],
+            "tab": "options"
+        },
+        "values": {
+            "type": "options",
+            "required": true,
+            "storage": "json_column",
+            "default": [
+                {
+                    "label": "Option 1",
+                    "value": "1",
+                    "default": false
+                },
+                {
+                    "label": "Option 2",
+                    "value": "2",
+                    "default": false
+                },
+                {
+                    "label": "Option 3",
+                    "value": "3",
+                    "default": false
+                }
+            ],
+            "description": "Define the available checkbox options",
+            "tab": "options"
+        },
+        "source_url": {
+            "type": "text",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "URL to fetch options from",
+            "tab": "options"
+        },
+        "headers": {
+            "type": "textarea",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "JSON object of headers",
+            "tab": "options"
+        },
+        "value_key": {
+            "type": "text",
+            "required": false,
+            "storage": "json_column",
+            "default": "value",
+            "description": "JSON path to value field",
+            "tab": "options"
+        },
+        "label_key": {
+            "type": "text",
+            "required": false,
+            "storage": "json_column",
+            "default": "label",
+            "description": "JSON path to label field",
+            "tab": "options"
+        },
+        "model_class": {
+            "type": "text",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "Fully qualified model class",
+            "tab": "options"
+        },
+        "value_column": {
+            "type": "text",
+            "required": false,
+            "storage": "json_column",
+            "default": "id",
+            "description": "Database column for option value",
+            "tab": "options"
+        },
+        "label_column": {
+            "type": "text",
+            "required": false,
+            "storage": "json_column",
+            "default": "name",
+            "description": "Database column for option label",
+            "tab": "options"
+        },
+        "scope": {
+            "type": "text",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "Optional scope method name",
+            "tab": "options"
+        },
+        "where_conditions": {
+            "type": "textarea",
+            "required": false,
+            "storage": "json_column",
+            "default": null,
+            "description": "JSON object of where conditions",
+            "tab": "options"
+        },
+        "layout": {
+            "type": "select",
+            "required": false,
+            "storage": "json_column",
+            "default": "vertical",
+            "description": "Layout",
+            "options": [
+                "Vertical (Stacked)",
+                "Horizontal (Inline)"
+            ],
+            "options_labels": {
+                "vertical": "Vertical (Stacked)",
+                "horizontal": "Horizontal (Inline)"
+            },
+            "tab": "options"
+        }
+    },
+    "validation_rules": {
+        "type": "array",
+        "required": false,
+        "storage": "json_column",
+        "description": "Laravel validation rules",
+        "example": [
+            "min",
+            "max"
+        ],
+        "available_rules": {
+            "min": {
+                "format": "min:{value}",
+                "description": "Minimum Selections",
+                "help": "Minimum number of checkboxes that must be selected",
+                "value_type": "number",
+                "placeholder": null
+            },
+            "max": {
+                "format": "max:{value}",
+                "description": "Maximum Selections",
+                "help": "Maximum number of checkboxes that can be selected",
+                "value_type": "number",
+                "placeholder": null
+            }
+        }
+    },
+    "conditional_logic": {
+        "type": "object",
+        "required": false,
+        "storage": "json_column",
+        "description": "Visibility and conditional validation rules",
+        "structure": {
+            "action": {
+                "type": "string",
+                "required": true,
+                "options": [
+                    "show",
+                    "hide"
+                ],
+                "description": "Whether to show or hide when conditions are met"
+            },
+            "match": {
+                "type": "string",
+                "required": true,
+                "options": [
+                    "all",
+                    "any"
+                ],
+                "description": "all = AND logic (all conditions must be met), any = OR logic (any condition can be met)"
+            },
+            "conditions": {
+                "type": "array",
+                "description": "Array of condition objects",
+                "structure": {
+                    "target_field_id": {
+                        "type": "integer",
+                        "description": "Database ID of the field to check"
+                    },
+                    "operator": {
+                        "type": "string",
+                        "description": "Comparison operator for this field type",
+                        "options": [
+                            "checked",
+                            "unchecked"
+                        ]
+                    },
+                    "value": {
+                        "type": "mixed",
+                        "description": "Value to compare against (type depends on operator)"
+                    }
+                }
+            }
+        },
+        "example": {
+            "action": "show",
+            "match": "all",
+            "conditions": [
+                {
+                    "target_field_id": 123,
+                    "operator": "checked",
+                    "value": "example_value"
+                }
+            ]
+        }
+    },
+    "tabs": {
+        "basic": {
+            "label": "Basic",
+            "icon": "bi-info-circle",
+            "order": 10,
+            "view": "auto-generated from schema"
+        },
+        "options": {
+            "label": "Options",
+            "icon": "bi-sliders",
+            "order": 20,
+            "view": "auto-generated from schema"
+        },
+        "validation": {
+            "label": "Validation",
+            "icon": "bi-check-circle",
+            "order": 30,
+            "view": "slick-forms::livewire.partials.properties-panel.tabs.validation"
+        },
+        "style": {
+            "label": "Style",
+            "icon": "bi-palette",
+            "order": 40,
+            "view": "slick-forms::livewire.partials.properties-panel.tabs.style"
+        },
+        "advanced": {
+            "label": "Visibility",
+            "icon": "bi-eye",
+            "order": 50,
+            "view": "slick-forms::livewire.partials.properties-panel.tabs.advanced"
+        }
+    }
+}
