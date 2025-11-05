@@ -97,10 +97,20 @@ class InstallSlickFormsCommand extends Command
         info('Select the features you want to install:');
         $this->newLine();
 
-        // Build all available options
+        // Get installation status for all features
+        $statuses = $this->getFeatureStatuses();
+
+        // Build all available options with status badges
         $allOptions = [];
         foreach ($this->featureMigrations as $feature => $config) {
-            $allOptions[$feature] = $config['description'];
+            $description = $config['description'];
+
+            // Add status badge if feature is installed
+            if (isset($statuses[$feature]) && $statuses[$feature]['installed']) {
+                $description .= ' [INSTALLED]';
+            }
+
+            $allOptions[$feature] = $description;
         }
 
         // Add dependency-based features
@@ -108,10 +118,10 @@ class InstallSlickFormsCommand extends Command
             $allOptions[$feature] = $config['description'];
         }
 
-        // Get already enabled features and inform user
+        // Get already enabled features (this also cleans up failed installations)
         $enabledFeatures = $this->getEnabledFeatures();
         if (! empty($enabledFeatures)) {
-            $this->line('<comment>Currently enabled features: '.implode(', ', $enabledFeatures).'</comment>');
+            $this->line('<comment>Currently installed: '.implode(', ', $enabledFeatures).'</comment>');
             $this->newLine();
         }
 
@@ -153,6 +163,7 @@ class InstallSlickFormsCommand extends Command
 
     /**
      * Get features that are already enabled in the database
+     * Also cleans up features that failed installation (enabled but not installed)
      */
     protected function getEnabledFeatures(): array
     {
@@ -161,13 +172,63 @@ class InstallSlickFormsCommand extends Command
             return [];
         }
 
-        // Get features that are currently enabled
+        // Clean up failed installations (enabled=true but installed=false)
+        $failedFeatures = DB::table('slick_form_features')
+            ->where('enabled', true)
+            ->where('installed', false)
+            ->pluck('feature_name')
+            ->toArray();
+
+        if (! empty($failedFeatures)) {
+            // Disable features that failed to install
+            DB::table('slick_form_features')
+                ->whereIn('feature_name', $failedFeatures)
+                ->update([
+                    'enabled' => false,
+                    'enabled_at' => null,
+                    'updated_at' => now(),
+                ]);
+
+            if (count($failedFeatures) > 0) {
+                warning('Cleaned up failed installations: '.implode(', ', $failedFeatures));
+                $this->newLine();
+            }
+        }
+
+        // Get features that are currently enabled AND installed
         $enabled = DB::table('slick_form_features')
             ->where('enabled', true)
+            ->where('installed', true)
             ->pluck('feature_name')
             ->toArray();
 
         return $enabled;
+    }
+
+    /**
+     * Get installation status for all features
+     */
+    protected function getFeatureStatuses(): array
+    {
+        // Check if feature tracking table exists
+        if (! Schema::hasTable('slick_form_features')) {
+            return [];
+        }
+
+        // Get all features with their status
+        $features = DB::table('slick_form_features')
+            ->select('feature_name', 'enabled', 'installed')
+            ->get();
+
+        $statuses = [];
+        foreach ($features as $feature) {
+            $statuses[$feature->feature_name] = [
+                'enabled' => (bool) $feature->enabled,
+                'installed' => (bool) $feature->installed,
+            ];
+        }
+
+        return $statuses;
     }
 
     /**
