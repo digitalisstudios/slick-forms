@@ -154,14 +154,21 @@ class SubmissionViewer extends Component
     {
         $exportService = app(SubmissionExportService::class);
 
-        return $exportService->isExcelAvailable();
+        return $exportService->canExportExcel();
     }
 
     public function getPdfAvailableProperty(): bool
     {
         $exportService = app(SubmissionExportService::class);
 
-        return $exportService->isPdfAvailable();
+        return $exportService->canExportPdf();
+    }
+
+    public function getCsvAvailableProperty(): bool
+    {
+        $exportService = app(SubmissionExportService::class);
+
+        return $exportService->canExportCsv();
     }
 
     public function render()

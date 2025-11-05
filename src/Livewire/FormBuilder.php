@@ -3268,6 +3268,10 @@ class FormBuilder extends Component
      */
     public function loadVersionHistory(): void
     {
+        if (! slick_forms_feature_enabled('versioning')) {
+            return;
+        }
+
         $versionService = app(\DigitalisStudios\SlickForms\Services\FormVersionService::class);
         $this->versions = $versionService->getVersionHistory($this->form)->map(function ($version) {
             return [
@@ -3287,6 +3291,10 @@ class FormBuilder extends Component
      */
     public function createVersion(?string $versionName = null, ?string $changeSummary = null): void
     {
+        if (! slick_forms_feature_enabled('versioning')) {
+            return;
+        }
+
         $versionService = app(\DigitalisStudios\SlickForms\Services\FormVersionService::class);
 
         try {
@@ -3316,6 +3324,10 @@ class FormBuilder extends Component
      */
     public function restoreVersion(int $versionId)
     {
+        if (! slick_forms_feature_enabled('versioning')) {
+            return;
+        }
+
         $versionService = app(\DigitalisStudios\SlickForms\Services\FormVersionService::class);
         $version = \DigitalisStudios\SlickForms\Models\FormVersion::findOrFail($versionId);
 
@@ -3348,6 +3360,10 @@ class FormBuilder extends Component
      */
     public function deleteVersion(int $versionId): void
     {
+        if (! slick_forms_feature_enabled('versioning')) {
+            return;
+        }
+
         $versionService = app(\DigitalisStudios\SlickForms\Services\FormVersionService::class);
         $version = \DigitalisStudios\SlickForms\Models\FormVersion::findOrFail($versionId);
 
@@ -3373,6 +3389,10 @@ class FormBuilder extends Component
      */
     public function showVersionComparison(int $versionId1, int $versionId2): void
     {
+        if (! slick_forms_feature_enabled('versioning')) {
+            return;
+        }
+
         $versionService = app(\DigitalisStudios\SlickForms\Services\FormVersionService::class);
         $version1 = \DigitalisStudios\SlickForms\Models\FormVersion::findOrFail($versionId1);
         $version2 = \DigitalisStudios\SlickForms\Models\FormVersion::findOrFail($versionId2);

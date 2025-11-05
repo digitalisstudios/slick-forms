@@ -592,11 +592,13 @@
 	                                <i class="bi bi-gear me-2"></i>Settings
 	                            </button>
 	                        </li>
-	                        <li>
-	                            <button type="button" class="dropdown-item" wire:click="toggleVersionHistory">
-	                                <i class="bi bi-clock-history me-2"></i>Version History
-	                            </button>
-	                        </li>
+	                        @if(slick_forms_feature_enabled('versioning'))
+	                            <li>
+	                                <button type="button" class="dropdown-item" wire:click="toggleVersionHistory">
+	                                    <i class="bi bi-clock-history me-2"></i>Version History
+	                                </button>
+	                            </li>
+	                        @endif
 	                        <li><hr class="dropdown-divider"></li>
 	                        <li>
 	                            <form action="{{ route('slick-forms.forms.duplicate', $form) }}" method="POST">
@@ -1417,7 +1419,7 @@
     @endif
 
     {{-- Version History Modal --}}
-    @if($showVersionHistory)
+    @if($showVersionHistory && slick_forms_feature_enabled('versioning'))
         <div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);" wire:key="version-history-modal">
             <div class="modal-dialog modal-lg modal-dialog-scrollable">
                 <div class="modal-content">

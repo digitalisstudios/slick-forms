@@ -66,11 +66,7 @@ class SlickFormsServiceProvider extends ServiceProvider
             return new LayoutElementRegistry;
         });
 
-        // V2 Services
-        $this->app->singleton(EmailNotificationService::class, function ($app) {
-            return new EmailNotificationService;
-        });
-
+        // Core services (always available)
         $this->app->singleton(SpamProtectionService::class, function ($app) {
             return new SpamProtectionService;
         });
@@ -87,21 +83,41 @@ class SlickFormsServiceProvider extends ServiceProvider
             return new UrlObfuscationService;
         });
 
-        $this->app->singleton(WebhookService::class, function ($app) {
-            return new WebhookService;
-        });
-
         $this->app->singleton(CarouselPresetService::class, function ($app) {
             return new CarouselPresetService;
         });
 
-        $this->app->singleton(FormVersionService::class, function ($app) {
-            return new FormVersionService;
-        });
+        // Feature-specific services (conditional registration)
+        if (config('slick-forms.features.email_notifications', true)) {
+            $this->app->singleton(EmailNotificationService::class, function ($app) {
+                return new EmailNotificationService;
+            });
+        }
+
+        if (config('slick-forms.features.webhooks', true)) {
+            $this->app->singleton(WebhookService::class, function ($app) {
+                return new WebhookService;
+            });
+        }
+
+        if (config('slick-forms.features.versioning', true)) {
+            $this->app->singleton(FormVersionService::class, function ($app) {
+                return new FormVersionService;
+            });
+        }
+
+        if (config('slick-forms.features.analytics', true)) {
+            $this->app->singleton(FormAnalyticsService::class, function ($app) {
+                return new FormAnalyticsService;
+            });
+        }
     }
 
     public function boot(): void
     {
+        // Load helper functions
+        require_once __DIR__.'/helpers.php';
+
         $this->loadMigrationsFrom(__DIR__.'/database/migrations');
 
         $this->loadViewsFrom(__DIR__.'/resources/views', 'slick-forms');
@@ -134,16 +150,30 @@ class SlickFormsServiceProvider extends ServiceProvider
         $this->registerCommands();
 
         if ($this->app->bound('livewire')) {
+            // Core components (always available)
             Livewire::component('slick-forms::form-builder', FormBuilder::class);
             Livewire::component('slick-forms::form-renderer', FormRenderer::class);
             Livewire::component('slick-forms::submission-viewer', SubmissionViewer::class);
-            Livewire::component('slick-forms::form-analytics', FormAnalytics::class);
-            Livewire::component('slick-forms::email-logs-viewer', EmailLogsViewer::class);
-            Livewire::component('slick-forms::spam-logs-viewer', SpamLogsViewer::class);
-            Livewire::component('slick-forms::webhook-logs-viewer', \DigitalisStudios\SlickForms\Livewire\WebhookLogsViewer::class);
             Livewire::component('slick-forms::manage', Manage::class);
             Livewire::component('slick-forms::manage-stats', ManageStats::class);
             Livewire::component('slick-forms::form-templates', FormTemplates::class);
+
+            // Feature-specific components (conditional registration)
+            if (config('slick-forms.features.analytics', true)) {
+                Livewire::component('slick-forms::form-analytics', FormAnalytics::class);
+            }
+
+            if (config('slick-forms.features.email_notifications', true)) {
+                Livewire::component('slick-forms::email-logs-viewer', EmailLogsViewer::class);
+            }
+
+            if (config('slick-forms.features.spam_logs', true)) {
+                Livewire::component('slick-forms::spam-logs-viewer', SpamLogsViewer::class);
+            }
+
+            if (config('slick-forms.features.webhooks', true)) {
+                Livewire::component('slick-forms::webhook-logs-viewer', \DigitalisStudios\SlickForms\Livewire\WebhookLogsViewer::class);
+            }
         }
     }
 
@@ -218,6 +248,7 @@ class SlickFormsServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 \DigitalisStudios\SlickForms\Console\Commands\ExportSchemasCommand::class,
+                \DigitalisStudios\SlickForms\Console\Commands\InstallSlickFormsCommand::class,
             ]);
         }
     }

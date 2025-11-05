@@ -476,4 +476,51 @@ return [
         'queue' => env('SLICK_FORMS_WEBHOOK_QUEUE', true),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Feature Flags (V2.1) - PRE-INSTALLATION DEFAULTS ONLY
+    |--------------------------------------------------------------------------
+    |
+    | IMPORTANT: These are DEFAULT VALUES used ONLY before installation.
+    |
+    | After running `php artisan slick-forms:install`, the database table
+    | `slick_form_features` becomes the SINGLE SOURCE OF TRUTH for which
+    | features are enabled. Changing these config values after installation
+    | will have NO EFFECT on feature availability.
+    |
+    | To enable/disable features after installation:
+    | - Run: `php artisan slick-forms:install` again
+    | - Or manually update the `slick_form_features` table
+    |
+    | WARNING: Do NOT rely on config for feature state in production. Config
+    | files can be overwritten during deployments, causing inconsistent state.
+    | The database is deployment-safe and persists feature selections.
+    |
+    */
+
+    'features' => [
+        'analytics' => env('SLICK_FORMS_FEATURE_ANALYTICS', true),
+        'webhooks' => env('SLICK_FORMS_FEATURE_WEBHOOKS', true),
+        'spam_logs' => env('SLICK_FORMS_FEATURE_SPAM_LOGS', true),
+        'email_notifications' => env('SLICK_FORMS_FEATURE_EMAIL_NOTIFICATIONS', true),
+        'versioning' => env('SLICK_FORMS_FEATURE_VERSIONING', true),
+        'exports' => env('SLICK_FORMS_FEATURE_EXPORTS', true),
+        'qr_codes' => env('SLICK_FORMS_FEATURE_QR_CODES', true),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Installation (V2.1)
+    |--------------------------------------------------------------------------
+    |
+    | Configure the installation wizard behavior when running
+    | php artisan slick-forms:install
+    |
+    */
+
+    'installation' => [
+        'wizard_enabled' => true,
+        'auto_install_dependencies' => false,
+    ],
+
 ];

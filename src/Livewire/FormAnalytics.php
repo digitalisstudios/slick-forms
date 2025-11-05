@@ -29,7 +29,10 @@ class FormAnalytics extends Component
     public function mount(int $formId): void
     {
         $this->form = CustomForm::findOrFail($formId);
-        $this->loadAnalytics();
+
+        if (slick_forms_feature_enabled('analytics')) {
+            $this->loadAnalytics();
+        }
     }
 
     public function updatedDays(): void
@@ -55,6 +58,14 @@ class FormAnalytics extends Component
 
     public function render()
     {
+        // Don't render anything if analytics feature is disabled
+        if (! slick_forms_feature_enabled('analytics')) {
+            return view('slick-forms::livewire.feature-disabled', [
+                'feature' => 'Analytics',
+                'message' => 'The analytics feature is currently disabled.',
+            ]);
+        }
+
         return view('slick-forms::livewire.form-analytics');
     }
 }

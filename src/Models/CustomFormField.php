@@ -91,11 +91,6 @@ class CustomFormField extends Model
         return $this->hasMany(CustomFormField::class, 'parent_field_id')->orderBy('order');
     }
 
-    public function dynamicOptionsCache(): HasMany
-    {
-        return $this->hasMany(DynamicOptionsCache::class, 'field_id');
-    }
-
     protected static function newFactory()
     {
         return \DigitalisStudios\SlickForms\Database\Factories\CustomFormFieldFactory::new();

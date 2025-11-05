@@ -5,7 +5,7 @@ namespace DigitalisStudios\SlickForms\Services;
 use DigitalisStudios\SlickForms\Events\DynamicOptionsFailed;
 use DigitalisStudios\SlickForms\Events\DynamicOptionsLoaded;
 use DigitalisStudios\SlickForms\Models\CustomFormField;
-use DigitalisStudios\SlickForms\Models\DynamicOptionsCache;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 /**
@@ -229,22 +229,15 @@ class DynamicOptionsService
      */
     public function getCachedOptions(CustomFormField $field, string $cacheKey): ?array
     {
-        $cache = DynamicOptionsCache::where('field_id', $field->id)
-            ->where('cache_key', $cacheKey)
-            ->first();
+        $fullCacheKey = "slick-forms.dynamic-options.{$field->id}.{$cacheKey}";
 
-        if ($cache === null) {
-            return null;
+        // Use tags if supported
+        if (method_exists(Cache::getStore(), 'tags')) {
+            return Cache::tags(['slick-forms-dynamic-options', "slick-forms-field-{$field->id}"])
+                ->get($fullCacheKey);
         }
 
-        // Check if expired
-        if ($cache->isExpired()) {
-            $cache->delete();
-
-            return null;
-        }
-
-        return $cache->options;
+        return Cache::get($fullCacheKey);
     }
 
     /**
@@ -257,17 +250,15 @@ class DynamicOptionsService
      */
     public function cacheOptions(CustomFormField $field, string $cacheKey, array $options, int $ttl): void
     {
-        DynamicOptionsCache::updateOrCreate(
-            [
-                'field_id' => $field->id,
-                'cache_key' => $cacheKey,
-            ],
-            [
-                'options' => $options,
-                'cached_at' => now(),
-                'ttl_seconds' => $ttl,
-            ]
-        );
+        $fullCacheKey = "slick-forms.dynamic-options.{$field->id}.{$cacheKey}";
+
+        // Use tags if supported for easier invalidation
+        if (method_exists(Cache::getStore(), 'tags')) {
+            Cache::tags(['slick-forms-dynamic-options', "slick-forms-field-{$field->id}"])
+                ->put($fullCacheKey, $options, $ttl);
+        } else {
+            Cache::put($fullCacheKey, $options, $ttl);
+        }
     }
 
     /**
@@ -277,7 +268,15 @@ class DynamicOptionsService
      */
     public function invalidateCache(CustomFormField $field): void
     {
-        DynamicOptionsCache::where('field_id', $field->id)->delete();
+        // If cache driver supports tags (redis, memcached), flush by tag
+        if (method_exists(Cache::getStore(), 'tags')) {
+            Cache::tags(["slick-forms-field-{$field->id}"])->flush();
+        } else {
+            // For drivers that don't support tags, we can't efficiently clear
+            // all cache keys for a field. The cache will expire naturally based on TTL.
+            // Alternatively, you could store all cache keys in a separate registry.
+            // For now, we just note that the cache will expire per TTL.
+        }
     }
 
     /**

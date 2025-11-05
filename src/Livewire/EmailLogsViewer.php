@@ -24,6 +24,8 @@ class EmailLogsViewer extends Component
     public function mount(int $formId): void
     {
         $this->form = CustomForm::findOrFail($formId);
+
+        // Feature check happens in render()
     }
 
     public function updatingSearchQuery(): void
@@ -97,6 +99,14 @@ class EmailLogsViewer extends Component
 
     public function render()
     {
+        // Don't render if email notifications feature is disabled
+        if (! slick_forms_feature_enabled('email_notifications')) {
+            return view('slick-forms::livewire.feature-disabled', [
+                'feature' => 'Email Notifications',
+                'message' => 'The email notifications feature is currently disabled.',
+            ]);
+        }
+
         return view('slick-forms::livewire.email-logs-viewer', [
             'logs' => $this->logs,
             'selectedLog' => $this->selectedLog,

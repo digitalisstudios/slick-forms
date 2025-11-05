@@ -8,12 +8,20 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * This migration creates the 9 core tables required for Slick Forms to function.
+     * The slick_form_features table tracks which optional features are enabled/installed.
+     * Optional feature tables (analytics, webhooks, spam logs, email, versioning)
+     * are installed separately via feature-specific migrations in the features/ directory.
      */
     public function up(): void
     {
-        // 1. Create slick_forms table
+        // 1. Create slick_forms table (with V2 columns)
         Schema::create('slick_forms', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->nullable()->unique();
+            $table->string('url_strategy')->default('hashid'); // 'id', 'hashid', 'uuid'
+            $table->string('hashid_salt')->nullable(); // Per-form salt (optional)
             $table->string('name');
             $table->text('description')->nullable();
             $table->boolean('is_active')->default(true);
@@ -50,6 +58,7 @@ return new class extends Migration
             $table->foreignId('slick_form_id')->constrained('slick_forms')->onDelete('cascade');
             $table->foreignId('slick_form_page_id')->nullable()->constrained('slick_form_pages')->onDelete('set null');
             $table->foreignId('parent_id')->nullable()->constrained('slick_form_layout_elements')->onDelete('cascade');
+            $table->unsignedBigInteger('parent_field_id')->nullable(); // Foreign key added after slick_form_fields table
             $table->string('element_type');
             $table->string('element_id')->nullable();
             $table->integer('order')->default(0);
@@ -91,14 +100,18 @@ return new class extends Migration
             $table->unique(['slick_form_id', 'name'], 'unique_field_name_per_form');
         });
 
-        // 5. Create slick_form_submissions table
+        // 5. Create slick_form_submissions table (with V2 columns)
         Schema::create('slick_form_submissions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('slick_form_id')->constrained('slick_forms')->onDelete('cascade');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->string('ip_address')->nullable();
+            $table->string('model_type')->nullable();
+            $table->unsignedBigInteger('model_id')->nullable();
             $table->timestamp('submitted_at');
             $table->timestamps();
+
+            $table->index(['model_type', 'model_id']);
         });
 
         // 6. Create slick_form_field_values table
@@ -110,47 +123,60 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // 7. Create slick_form_analytics_sessions table
-        Schema::create('slick_form_analytics_sessions', function (Blueprint $table) {
+        // 7. Create slick_form_model_bindings table (Core Feature)
+        Schema::create('slick_form_model_bindings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('slick_form_id')->constrained('slick_forms')->onDelete('cascade');
-            $table->foreignId('slick_form_submission_id')->nullable()->constrained('slick_form_submissions')->onDelete('set null');
-            $table->string('session_id')->index();
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
-            $table->string('ip_address', 45)->nullable();
-            $table->text('user_agent')->nullable();
-            $table->string('device_type', 50)->nullable();
-            $table->string('browser', 100)->nullable();
-            $table->string('platform', 100)->nullable();
-            $table->timestamp('started_at')->nullable();
-            $table->timestamp('submitted_at')->nullable();
-            $table->timestamp('abandoned_at')->nullable();
-            $table->integer('time_spent_seconds')->nullable();
-            $table->integer('current_page_index')->default(0);
-            $table->string('referrer_url', 500)->nullable();
+            $table->foreignId('form_id')->constrained('slick_forms')->onDelete('cascade');
+            $table->string('model_class'); // Full class name (e.g., App\Models\User)
+            $table->string('route_parameter')->default('model'); // Route param name
+            $table->string('route_key')->default('id'); // Model key (id, slug, uuid, email)
+            $table->json('field_mappings'); // ['form_field_name' => 'model_attribute']
+            $table->json('relationship_mappings')->nullable(); // ['field_name' => 'relationship.attribute']
+            $table->boolean('allow_create')->default(true);
+            $table->boolean('allow_update')->default(true);
+            $table->text('custom_population_logic')->nullable(); // PHP code or class name
+            $table->text('custom_save_logic')->nullable(); // PHP code or class name
             $table->timestamps();
 
-            $table->index(['slick_form_id', 'started_at']);
-            $table->index(['slick_form_id', 'submitted_at']);
+            $table->unique('form_id');
         });
 
-        // 8. Create slick_form_analytics_events table
-        Schema::create('slick_form_analytics_events', function (Blueprint $table) {
+        // 8. Create slick_form_signed_urls table (Core Feature)
+        Schema::create('slick_form_signed_urls', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('slick_form_analytics_session_id');
-            $table->string('event_type', 50);
-            $table->foreignId('slick_form_field_id')->nullable()->constrained('slick_form_fields')->onDelete('cascade');
-            $table->integer('page_index')->nullable();
-            $table->json('event_data')->nullable();
-            $table->timestamp('created_at');
+            $table->foreignId('form_id')->constrained('slick_forms')->onDelete('cascade');
+            $table->string('signature')->unique();
+            $table->json('prefill_data')->nullable(); // Encrypted form data
+            $table->timestamp('expires_at')->nullable();
+            $table->integer('max_uses')->nullable(); // Optional: limit number of uses
+            $table->integer('uses')->default(0);
+            $table->timestamps();
 
-            $table->foreign('slick_form_analytics_session_id', 'analytics_events_session_fk')
+            $table->index(['signature', 'expires_at']);
+        });
+
+        // 9. Create slick_form_features table (Feature Tracking)
+        Schema::create('slick_form_features', function (Blueprint $table) {
+            $table->id();
+            $table->string('feature_name', 50)->unique();
+            $table->boolean('enabled')->default(false);
+            $table->boolean('installed')->default(false);
+            $table->text('migration_path')->nullable();
+            $table->timestamp('installed_at')->nullable();
+            $table->timestamp('enabled_at')->nullable();
+            $table->timestamps();
+
+            $table->index('feature_name');
+            $table->index('enabled');
+            $table->index('installed');
+        });
+
+        // 10. Add foreign key constraint for parent_field_id after all tables exist
+        Schema::table('slick_form_layout_elements', function (Blueprint $table) {
+            $table->foreign('parent_field_id')
                 ->references('id')
-                ->on('slick_form_analytics_sessions')
-                ->onDelete('cascade');
-
-            $table->index(['slick_form_analytics_session_id', 'created_at'], 'analytics_events_session_created_idx');
-            $table->index(['event_type', 'slick_form_field_id'], 'analytics_events_type_field_idx');
+                ->on('slick_form_fields')
+                ->nullOnDelete();
         });
     }
 
@@ -159,9 +185,15 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Drop foreign key constraint first
+        Schema::table('slick_form_layout_elements', function (Blueprint $table) {
+            $table->dropForeign(['parent_field_id']);
+        });
+
         // Drop in reverse order to respect foreign key constraints
-        Schema::dropIfExists('slick_form_analytics_events');
-        Schema::dropIfExists('slick_form_analytics_sessions');
+        Schema::dropIfExists('slick_form_features');
+        Schema::dropIfExists('slick_form_signed_urls');
+        Schema::dropIfExists('slick_form_model_bindings');
         Schema::dropIfExists('slick_form_field_values');
         Schema::dropIfExists('slick_form_submissions');
         Schema::dropIfExists('slick_form_fields');

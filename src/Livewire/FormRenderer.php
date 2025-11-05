@@ -51,8 +51,10 @@ class FormRenderer extends Component
         $this->form = CustomForm::with(['fields.children', 'layoutElements', 'pages', 'modelBinding'])->findOrFail($formId);
         $this->model = $model;
 
-        // Initialize analytics session
-        $this->initializeAnalyticsSession();
+        // Initialize analytics session if feature enabled
+        if (slick_forms_feature_enabled('analytics')) {
+            $this->initializeAnalyticsSession();
+        }
 
         if (! $this->form->is_active) {
             abort(404, 'This form is not currently active.');
@@ -495,6 +497,16 @@ class FormRenderer extends Component
         // Store submission for success screen
         $this->lastSubmission = $submission;
 
+        // Trigger webhooks if feature enabled
+        if (slick_forms_feature_enabled('webhooks')) {
+            $this->dispatchWebhooks($submission);
+        }
+
+        // Send email notifications if feature enabled
+        if (slick_forms_feature_enabled('email_notifications')) {
+            $this->dispatchEmailNotifications($submission);
+        }
+
         // Check for redirect
         $successAction = $this->determineSuccessAction($submission);
 
@@ -613,6 +625,10 @@ class FormRenderer extends Component
 
     protected function initializeAnalyticsSession(): void
     {
+        if (! slick_forms_feature_enabled('analytics')) {
+            return;
+        }
+
         $session = SlickFormAnalyticsSession::create([
             'slick_form_id' => $this->form->id,
             'session_id' => session()->getId(),
@@ -629,6 +645,10 @@ class FormRenderer extends Component
 
     public function trackFormStart(): void
     {
+        if (! slick_forms_feature_enabled('analytics')) {
+            return;
+        }
+
         if ($this->analyticsSessionId && ! $this->analyticsStarted) {
             SlickFormAnalyticsSession::where('id', $this->analyticsSessionId)
                 ->update(['started_at' => now()]);
@@ -639,6 +659,10 @@ class FormRenderer extends Component
 
     public function trackFieldEvent(int $fieldId, string $eventType, ?string $eventData = null): void
     {
+        if (! slick_forms_feature_enabled('analytics')) {
+            return;
+        }
+
         if (! $this->analyticsSessionId) {
             return;
         }
@@ -658,6 +682,10 @@ class FormRenderer extends Component
 
     public function trackValidationError(int $fieldId, string $errorMessage): void
     {
+        if (! slick_forms_feature_enabled('analytics')) {
+            return;
+        }
+
         $this->trackFieldEvent($fieldId, 'validation_error', $errorMessage);
     }
 
@@ -867,6 +895,73 @@ class FormRenderer extends Component
     }
 
     // ==================== End Success Screen Methods ====================
+
+    // ==================== Webhooks & Email Notifications ====================
+
+    /**
+     * Dispatch webhooks for this form submission
+     */
+    protected function dispatchWebhooks(CustomFormSubmission $submission): void
+    {
+        $webhooks = \DigitalisStudios\SlickForms\Models\FormWebhook::where('form_id', $this->form->id)
+            ->where('is_active', true)
+            ->get();
+
+        if ($webhooks->isEmpty()) {
+            return;
+        }
+
+        foreach ($webhooks as $webhook) {
+            // Build payload from submission data
+            $payload = $this->buildWebhookPayload($submission);
+
+            // Dispatch webhook job
+            \DigitalisStudios\SlickForms\Jobs\SendWebhook::dispatch($webhook, $payload, $submission->id);
+        }
+    }
+
+    /**
+     * Build webhook payload from submission
+     */
+    protected function buildWebhookPayload(CustomFormSubmission $submission): array
+    {
+        $payload = [
+            'form_id' => $this->form->id,
+            'form_name' => $this->form->name,
+            'submission_id' => $submission->id,
+            'submitted_at' => $submission->submitted_at->toIso8601String(),
+            'ip_address' => $submission->ip_address,
+            'user_id' => $submission->user_id,
+            'fields' => [],
+        ];
+
+        // Add field values
+        foreach ($submission->fieldValues as $fieldValue) {
+            $field = $fieldValue->field;
+            if ($field) {
+                $payload['fields'][$field->name] = [
+                    'label' => $field->label,
+                    'value' => $fieldValue->value,
+                    'type' => $field->field_type,
+                ];
+            }
+        }
+
+        return $payload;
+    }
+
+    /**
+     * Dispatch email notifications for this form submission
+     */
+    protected function dispatchEmailNotifications(CustomFormSubmission $submission): void
+    {
+        $emailService = app(\DigitalisStudios\SlickForms\Services\EmailNotificationService::class);
+
+        // Send all configured email notifications for this form
+        $emailService->sendNotificationsForSubmission($submission);
+    }
+
+    // ==================== End Webhooks & Email Notifications ====================
 
     public function render()
     {

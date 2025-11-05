@@ -11,7 +11,36 @@ use Symfony\Component\HttpFoundation\Response;
 class SubmissionExportService
 {
     /**
-     * Check if Excel package is installed
+     * Check if Excel export is available (feature enabled AND package installed)
+     */
+    public function canExportExcel(): bool
+    {
+        return slick_forms_feature_enabled('exports')
+            && class_exists(\Maatwebsite\Excel\Facades\Excel::class);
+    }
+
+    /**
+     * Check if PDF export is available (feature enabled AND package installed)
+     */
+    public function canExportPdf(): bool
+    {
+        return slick_forms_feature_enabled('exports')
+            && class_exists(\Barryvdh\DomPDF\Facade\Pdf::class);
+    }
+
+    /**
+     * Check if CSV export is available (feature enabled, uses Excel package)
+     */
+    public function canExportCsv(): bool
+    {
+        return slick_forms_feature_enabled('exports')
+            && class_exists(\Maatwebsite\Excel\Facades\Excel::class);
+    }
+
+    /**
+     * Check if Excel package is installed (legacy method)
+     *
+     * @deprecated Use canExportExcel() instead
      */
     public function isExcelAvailable(): bool
     {
@@ -19,7 +48,9 @@ class SubmissionExportService
     }
 
     /**
-     * Check if PDF package is installed
+     * Check if PDF package is installed (legacy method)
+     *
+     * @deprecated Use canExportPdf() instead
      */
     public function isPdfAvailable(): bool
     {

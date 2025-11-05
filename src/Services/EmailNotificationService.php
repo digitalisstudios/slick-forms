@@ -86,6 +86,18 @@ class EmailNotificationService
     }
 
     /**
+     * Send all email notifications (admin + user confirmation) for a submission
+     */
+    public function sendNotificationsForSubmission(CustomFormSubmission $submission): void
+    {
+        // Send admin notifications
+        $this->sendAdminNotification($submission);
+
+        // Send user confirmation emails
+        $this->sendUserConfirmation($submission);
+    }
+
+    /**
      * Render email template with submission data
      *
      * @return string Rendered HTML content
