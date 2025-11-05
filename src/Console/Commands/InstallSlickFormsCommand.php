@@ -109,11 +109,11 @@ class InstallSlickFormsCommand extends Command
         foreach ($this->featureMigrations as $feature => $config) {
             $description = $config['description'];
 
-            // Add right-aligned, styled badge if feature is installed
+            // Add right-aligned, green checkmark badge if feature is installed
             if (isset($statuses[$feature]) && $statuses[$feature]['installed']) {
-                // Pad description to fixed width, then add badge
+                // Pad description to fixed width, then add green checkmark badge
                 $paddedDescription = str_pad($description, $columnWidth, ' ', STR_PAD_RIGHT);
-                $description = $paddedDescription.'<bg=green;fg=white> INSTALLED </>';
+                $description = $paddedDescription.'<fg=green>✓ INSTALLED</>';
             }
 
             $allOptions[$feature] = $description;
