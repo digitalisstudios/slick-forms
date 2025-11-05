@@ -66,17 +66,18 @@ return new class extends Migration
         });
 
         // Dynamic Options (Cascading Dropdowns)
-        Schema::create('slick_dynamic_options_cache', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('field_id')->constrained('slick_form_fields')->onDelete('cascade');
-            $table->string('cache_key'); // Hash of source URL/model query
-            $table->json('options'); // Cached option data
-            $table->timestamp('cached_at');
-            $table->integer('ttl_seconds'); // Time to live
-            $table->timestamps();
-
-            $table->index(['field_id', 'cache_key']);
-        });
+        // NOTE: Removed in v2.1.0 - Now using Laravel's cache system instead of database table
+        // Schema::create('slick_dynamic_options_cache', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->foreignId('field_id')->constrained('slick_form_fields')->onDelete('cascade');
+        //     $table->string('cache_key'); // Hash of source URL/model query
+        //     $table->json('options'); // Cached option data
+        //     $table->timestamp('cached_at');
+        //     $table->integer('ttl_seconds'); // Time to live
+        //     $table->timestamps();
+        //
+        //     $table->index(['field_id', 'cache_key']);
+        // });
 
         // Model Binding (Eloquent Integration)
         Schema::create('slick_form_model_bindings', function (Blueprint $table) {
@@ -246,7 +247,7 @@ return new class extends Migration
         Schema::dropIfExists('slick_form_webhooks');
         Schema::dropIfExists('slick_form_signed_urls');
         Schema::dropIfExists('slick_form_model_bindings');
-        Schema::dropIfExists('slick_dynamic_options_cache');
+        // Schema::dropIfExists('slick_dynamic_options_cache'); // Removed in v2.1.0
         Schema::dropIfExists('slick_form_spam_logs');
         Schema::dropIfExists('slick_form_email_logs');
         Schema::dropIfExists('slick_form_email_templates');
