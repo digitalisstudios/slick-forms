@@ -108,11 +108,14 @@ class InstallSlickFormsCommand extends Command
             $options[$feature] = "{$feature} - {$config['description']}";
         }
 
+        // Get already enabled features to pre-select them
+        $enabledFeatures = $this->getEnabledFeatures();
+
         // Interactive multiselect
         $selected = multiselect(
             label: 'Features (use space to select, enter to confirm):',
             options: $options,
-            default: array_keys($this->featureMigrations), // All migration features selected by default
+            default: $enabledFeatures,
             hint: 'Core tables will always be installed. Select additional features.'
         );
 
@@ -123,6 +126,25 @@ class InstallSlickFormsCommand extends Command
         }
 
         return $selectedFeatures;
+    }
+
+    /**
+     * Get features that are already enabled in the database
+     */
+    protected function getEnabledFeatures(): array
+    {
+        // Check if feature tracking table exists
+        if (! Schema::hasTable('slick_form_features')) {
+            return [];
+        }
+
+        // Get features that are currently enabled
+        $enabled = DB::table('slick_form_features')
+            ->where('enabled', true)
+            ->pluck('feature_name')
+            ->toArray();
+
+        return $enabled;
     }
 
     /**
