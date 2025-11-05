@@ -9,9 +9,10 @@ return new class extends Migration
     /**
      * Run the migrations.
      *
-     * This migration creates the 8 core tables required for Slick Forms to function.
+     * This migration creates the 9 core tables required for Slick Forms to function.
+     * The slick_form_features table tracks which optional features are enabled/installed.
      * Optional feature tables (analytics, webhooks, spam logs, email, versioning)
-     * are installed separately via feature-specific migrations.
+     * are installed separately via feature-specific migrations in the features/ directory.
      */
     public function up(): void
     {
@@ -154,7 +155,23 @@ return new class extends Migration
             $table->index(['signature', 'expires_at']);
         });
 
-        // 9. Add foreign key constraint for parent_field_id after all tables exist
+        // 9. Create slick_form_features table (Feature Tracking)
+        Schema::create('slick_form_features', function (Blueprint $table) {
+            $table->id();
+            $table->string('feature_name', 50)->unique();
+            $table->boolean('enabled')->default(false);
+            $table->boolean('installed')->default(false);
+            $table->text('migration_path')->nullable();
+            $table->timestamp('installed_at')->nullable();
+            $table->timestamp('enabled_at')->nullable();
+            $table->timestamps();
+
+            $table->index('feature_name');
+            $table->index('enabled');
+            $table->index('installed');
+        });
+
+        // 10. Add foreign key constraint for parent_field_id after all tables exist
         Schema::table('slick_form_layout_elements', function (Blueprint $table) {
             $table->foreign('parent_field_id')
                 ->references('id')
@@ -174,6 +191,7 @@ return new class extends Migration
         });
 
         // Drop in reverse order to respect foreign key constraints
+        Schema::dropIfExists('slick_form_features');
         Schema::dropIfExists('slick_form_signed_urls');
         Schema::dropIfExists('slick_form_model_bindings');
         Schema::dropIfExists('slick_form_field_values');
