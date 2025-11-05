@@ -158,6 +158,18 @@ class InstallSlickFormsCommand extends Command
             $selectedFeatures[$feature] = in_array($feature, $selected);
         }
 
+        // Show what was selected for debugging
+        $enabledCount = count(array_filter($selectedFeatures));
+        if ($enabledCount > 0) {
+            $this->newLine();
+            $this->line("<info>You selected {$enabledCount} feature(s): ".implode(', ', array_keys(array_filter($selectedFeatures))).'</info>');
+            $this->newLine();
+        } else {
+            $this->newLine();
+            $this->line('<comment>No features selected. Only core tables will be installed.</comment>');
+            $this->newLine();
+        }
+
         return $selectedFeatures;
     }
 
