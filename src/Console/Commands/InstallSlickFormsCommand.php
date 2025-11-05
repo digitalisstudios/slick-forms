@@ -104,21 +104,16 @@ class InstallSlickFormsCommand extends Command
 
         // Build all available options with status badges
         $allOptions = [];
-        $maxDescriptionLength = 0;
+        $columnWidth = 60; // Fixed width for consistent alignment
 
-        // First pass: calculate max description length for alignment
-        foreach ($this->featureMigrations as $feature => $config) {
-            $maxDescriptionLength = max($maxDescriptionLength, strlen($config['description']));
-        }
-
-        // Second pass: build options with right-aligned badges
         foreach ($this->featureMigrations as $feature => $config) {
             $description = $config['description'];
 
             // Add right-aligned, styled badge if feature is installed
             if (isset($statuses[$feature]) && $statuses[$feature]['installed']) {
-                $padding = str_repeat(' ', $maxDescriptionLength - strlen($description) + 2);
-                $description .= $padding.'<bg=green;fg=white> INSTALLED </>';
+                // Pad description to fixed width, then add badge
+                $paddedDescription = str_pad($description, $columnWidth, ' ', STR_PAD_RIGHT);
+                $description = $paddedDescription.'<bg=green;fg=white> INSTALLED </>';
             }
 
             $allOptions[$feature] = $description;
