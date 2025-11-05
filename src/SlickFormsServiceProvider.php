@@ -115,6 +115,9 @@ class SlickFormsServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Load helper functions
+        require_once __DIR__.'/helpers.php';
+
         $this->loadMigrationsFrom(__DIR__.'/database/migrations');
 
         $this->loadViewsFrom(__DIR__.'/resources/views', 'slick-forms');

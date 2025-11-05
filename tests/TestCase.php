@@ -17,7 +17,15 @@ abstract class TestCase extends Orchestra
         // Load helper functions
         require_once __DIR__.'/../src/helpers.php';
 
+        // Load core migrations
         $this->loadMigrationsFrom(__DIR__.'/../src/database/migrations');
+
+        // Load all feature migrations for backward compatibility with existing tests
+        $this->loadMigrationsFrom(__DIR__.'/../src/database/migrations/features/analytics');
+        $this->loadMigrationsFrom(__DIR__.'/../src/database/migrations/features/email');
+        $this->loadMigrationsFrom(__DIR__.'/../src/database/migrations/features/webhooks');
+        $this->loadMigrationsFrom(__DIR__.'/../src/database/migrations/features/spam');
+        $this->loadMigrationsFrom(__DIR__.'/../src/database/migrations/features/versioning');
 
         // Create users table for testing (needed for dynamic options service and model binding)
         $this->app['db']->connection()->getSchemaBuilder()->create('users', function ($table) {
@@ -59,5 +67,14 @@ abstract class TestCase extends Orchestra
         $app['config']->set('slick-forms.urls.signed_url_expiration', 24);
         $app['config']->set('slick-forms.load_routes', true);
         $app['config']->set('slick-forms.layout', 'slick-forms::layouts.standalone'); // Use standalone layout for tests
+
+        // Enable all features by default for backward compatibility with existing tests
+        $app['config']->set('slick-forms.features.analytics', true);
+        $app['config']->set('slick-forms.features.email_notifications', true);
+        $app['config']->set('slick-forms.features.webhooks', true);
+        $app['config']->set('slick-forms.features.spam_logs', true);
+        $app['config']->set('slick-forms.features.versioning', true);
+        $app['config']->set('slick-forms.features.exports', true);
+        $app['config']->set('slick-forms.features.qr_codes', true);
     }
 }
