@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Schema;
 
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\info;
-use function Laravel\Prompts\multiselect;
+use function Laravel\Prompts\multisearch;
 use function Laravel\Prompts\warning;
 
 class InstallSlickFormsCommand extends Command
@@ -90,34 +90,57 @@ class InstallSlickFormsCommand extends Command
     }
 
     /**
-     * Sub-Phase 7.1: Interactive feature selection
+     * Sub-Phase 7.1: Interactive feature selection with search
      */
     protected function selectFeatures(): array
     {
         info('Select the features you want to install:');
         $this->newLine();
 
-        // Build multiselect options
-        $options = [];
+        // Build all available options
+        $allOptions = [];
         foreach ($this->featureMigrations as $feature => $config) {
-            $options[$feature] = "{$feature} - {$config['description']}";
+            $allOptions[$feature] = "{$feature} - {$config['description']}";
         }
 
         // Add dependency-based features
         foreach ($this->featureDependencies as $feature => $config) {
-            $options[$feature] = "{$feature} - {$config['description']}";
+            $allOptions[$feature] = "{$feature} - {$config['description']}";
         }
 
-        // Get already enabled features to pre-select them
+        // Get already enabled features and inform user
         $enabledFeatures = $this->getEnabledFeatures();
+        if (! empty($enabledFeatures)) {
+            $this->line('<comment>Currently enabled features: '.implode(', ', $enabledFeatures).'</comment>');
+            $this->newLine();
+        }
 
-        // Interactive multiselect
-        $selected = multiselect(
-            label: 'Features (use space to select, enter to confirm):',
-            options: $options,
-            default: $enabledFeatures,
-            hint: 'Core tables will always be installed. Select additional features.'
+        // Interactive multisearch with filtering
+        $selected = multisearch(
+            label: 'Search and select features (type to filter, space to select, enter to confirm):',
+            options: function (string $value) use ($allOptions) {
+                // If no search query, return all options
+                if (strlen($value) === 0) {
+                    return $allOptions;
+                }
+
+                // Filter options based on search query (case-insensitive)
+                return collect($allOptions)
+                    ->filter(function ($description, $feature) use ($value) {
+                        $searchIn = strtolower($feature.' '.$description);
+                        $searchFor = strtolower($value);
+
+                        return str_contains($searchIn, $searchFor);
+                    })
+                    ->all();
+            },
+            placeholder: 'Type to search features...',
+            hint: 'Core tables will always be installed. Search to filter, space to toggle selection.',
+            scroll: 10
         );
+
+        // Merge with previously enabled features (keep them enabled unless explicitly deselected)
+        $selected = array_unique(array_merge($enabledFeatures, $selected));
 
         // Convert to associative array
         $selectedFeatures = [];
