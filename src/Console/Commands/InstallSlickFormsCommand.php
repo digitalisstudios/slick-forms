@@ -109,7 +109,7 @@ class InstallSlickFormsCommand extends Command
         foreach ($this->featureMigrations as $feature => $config) {
             $description = $config['description'];
 
-            // Add right-aligned, green checkmark badge if feature is installed
+            // Add right-aligned green checkmark badge if feature is installed (regardless of enabled state)
             if (isset($statuses[$feature]) && $statuses[$feature]['installed']) {
                 // Pad description to fixed width, then add green checkmark badge
                 $paddedDescription = str_pad($description, $columnWidth, ' ', STR_PAD_RIGHT);
@@ -540,6 +540,24 @@ class InstallSlickFormsCommand extends Command
     }
 
     /**
+     * Disable feature (keeps tables, just marks as disabled)
+     */
+    protected function disableFeature(string $feature): void
+    {
+        if (! Schema::hasTable('slick_form_features')) {
+            return;
+        }
+
+        DB::table('slick_form_features')
+            ->where('feature_name', $feature)
+            ->update([
+                'enabled' => false,
+                'enabled_at' => null,
+                'updated_at' => now(),
+            ]);
+    }
+
+    /**
      * Mark feature as installed AFTER migration succeeds
      */
     protected function markFeatureInstalled(string $feature): void
@@ -599,25 +617,46 @@ class InstallSlickFormsCommand extends Command
         $this->line('  ✓ Core tables installed');
         $this->newLine();
 
+        // Get current feature statuses
+        $statuses = $this->getFeatureStatuses();
+
+        // Disable features that were deselected (only for features with migrations)
+        $previouslyEnabled = $this->getEnabledFeatures();
+        foreach ($previouslyEnabled as $feature) {
+            if (isset($this->featureMigrations[$feature]) && ! ($selectedFeatures[$feature] ?? false)) {
+                $this->disableFeature($feature);
+                $this->line("  ○ {$feature} disabled");
+            }
+        }
+
         // Run feature migrations with tracking (only those with migrations)
         foreach ($selectedFeatures as $feature => $enabled) {
             if ($enabled && isset($this->featureMigrations[$feature])) {
                 try {
-                    // 1. Enable feature BEFORE migration
-                    $this->enableFeature($feature);
+                    // Check if already installed
+                    $isAlreadyInstalled = isset($statuses[$feature]) && $statuses[$feature]['installed'];
 
-                    // 2. Run migration
-                    $migrationPath = $this->getFeatureMigrationPath($feature);
-                    $config = $this->featureMigrations[$feature];
-                    $this->line("  Installing {$feature} ({$config['tables']} tables)...");
-                    $this->call('migrate', [
-                        '--path' => $migrationPath,
-                        '--force' => true,
-                    ]);
+                    if ($isAlreadyInstalled) {
+                        // Just re-enable the feature, don't run migration
+                        $this->enableFeature($feature);
+                        $this->line("  ✓ {$feature} re-enabled");
+                    } else {
+                        // 1. Enable feature BEFORE migration
+                        $this->enableFeature($feature);
 
-                    // 3. Mark as installed AFTER success
-                    $this->markFeatureInstalled($feature);
-                    $this->line("  ✓ {$feature} installed");
+                        // 2. Run migration
+                        $migrationPath = $this->getFeatureMigrationPath($feature);
+                        $config = $this->featureMigrations[$feature];
+                        $this->line("  Installing {$feature} ({$config['tables']} tables)...");
+                        $this->call('migrate', [
+                            '--path' => $migrationPath,
+                            '--force' => true,
+                        ]);
+
+                        // 3. Mark as installed AFTER success
+                        $this->markFeatureInstalled($feature);
+                        $this->line("  ✓ {$feature} installed");
+                    }
                 } catch (\Exception $e) {
                     // 4. Handle failure gracefully
                     $this->disableFeatureOnFailure($feature, $e);
