@@ -8,10 +8,16 @@ if (! function_exists('slick_forms_feature_enabled')) {
      */
     function slick_forms_feature_enabled(string $feature): bool
     {
+        // Check config first - if disabled in config, always return false
+        $configEnabled = config("slick-forms.features.{$feature}", true);
+        if (! $configEnabled) {
+            return false;
+        }
+
         // Check if feature tracking table exists
         if (! \Illuminate\Support\Facades\Schema::hasTable('slick_form_features')) {
-            // During migration, assume core features are enabled
-            return in_array($feature, ['core']);
+            // Fallback to config value when table doesn't exist
+            return $configEnabled;
         }
 
         // Check cache first (1 hour TTL)
@@ -21,6 +27,30 @@ if (! function_exists('slick_forms_feature_enabled')) {
             return \Illuminate\Support\Facades\DB::table('slick_form_features')
                 ->where('feature_name', $feature)
                 ->where('enabled', true)
+                ->exists();
+        });
+    }
+}
+
+if (! function_exists('slick_forms_feature_installed')) {
+    /**
+     * Check if a Slick Forms feature is installed (regardless of enabled state)
+     *
+     * @param  string  $feature  Feature key (e.g., 'analytics', 'webhooks')
+     */
+    function slick_forms_feature_installed(string $feature): bool
+    {
+        // Check if feature tracking table exists
+        if (! \Illuminate\Support\Facades\Schema::hasTable('slick_form_features')) {
+            return false;
+        }
+
+        // Check cache first (1 hour TTL)
+        $cacheKey = "slick_forms_features_installed.{$feature}";
+
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () use ($feature) {
+            return \Illuminate\Support\Facades\DB::table('slick_form_features')
+                ->where('feature_name', $feature)
                 ->exists();
         });
     }

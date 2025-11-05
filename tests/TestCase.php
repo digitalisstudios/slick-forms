@@ -14,6 +14,9 @@ abstract class TestCase extends Orchestra
     {
         parent::setUp();
 
+        // Load helper functions
+        require_once __DIR__.'/../src/helpers.php';
+
         $this->loadMigrationsFrom(__DIR__.'/../src/database/migrations');
 
         // Create users table for testing (needed for dynamic options service and model binding)
