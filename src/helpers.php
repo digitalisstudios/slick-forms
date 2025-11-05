@@ -8,19 +8,13 @@ if (! function_exists('slick_forms_feature_enabled')) {
      */
     function slick_forms_feature_enabled(string $feature): bool
     {
-        // Check config first - if disabled in config, always return false
-        $configEnabled = config("slick-forms.features.{$feature}", true);
-        if (! $configEnabled) {
-            return false;
-        }
-
         // Check if feature tracking table exists
         if (! \Illuminate\Support\Facades\Schema::hasTable('slick_form_features')) {
-            // Fallback to config value when table doesn't exist
-            return $configEnabled;
+            // Fallback to config value when table doesn't exist (pre-installation)
+            return config("slick-forms.features.{$feature}", true);
         }
 
-        // Check cache first (1 hour TTL)
+        // Database is the source of truth - check cache first (1 hour TTL)
         $cacheKey = "slick_forms_features.{$feature}";
 
         return \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () use ($feature) {

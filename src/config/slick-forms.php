@@ -478,12 +478,23 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Feature Flags (V2.1)
+    | Feature Flags (V2.1) - PRE-INSTALLATION DEFAULTS ONLY
     |--------------------------------------------------------------------------
     |
-    | Control which optional features are installed and enabled. Features can
-    | be selectively installed during setup to reduce database tables and
-    | dependencies. All features default to true for backward compatibility.
+    | IMPORTANT: These are DEFAULT VALUES used ONLY before installation.
+    |
+    | After running `php artisan slick-forms:install`, the database table
+    | `slick_form_features` becomes the SINGLE SOURCE OF TRUTH for which
+    | features are enabled. Changing these config values after installation
+    | will have NO EFFECT on feature availability.
+    |
+    | To enable/disable features after installation:
+    | - Run: `php artisan slick-forms:install` again
+    | - Or manually update the `slick_form_features` table
+    |
+    | WARNING: Do NOT rely on config for feature state in production. Config
+    | files can be overwritten during deployments, causing inconsistent state.
+    | The database is deployment-safe and persists feature selections.
     |
     */
 

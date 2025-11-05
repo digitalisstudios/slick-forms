@@ -81,13 +81,10 @@ class InstallSlickFormsCommand extends Command
         // Step 4: Run Migrations
         $this->runMigrations($selectedFeatures);
 
-        // Step 5: Update Config with Selected Features
-        $this->updateConfig($selectedFeatures);
-
-        // Step 6: Data Seeding (Templates & Demo Forms)
+        // Step 5: Data Seeding (Templates & Demo Forms)
         $this->handleDataSeeding($selectedFeatures);
 
-        // Step 7: Display Summary
+        // Step 6: Display Summary
         $this->displaySummary($selectedFeatures);
 
         return self::SUCCESS;
@@ -521,42 +518,7 @@ class InstallSlickFormsCommand extends Command
     }
 
     /**
-     * Sub-Phase 7.3: Update config file with selected features
-     */
-    protected function updateConfig(array $selectedFeatures): void
-    {
-        $configPath = config_path('slick-forms.php');
-
-        if (! File::exists($configPath)) {
-            warning('Config file not found. Run: php artisan vendor:publish --tag=slick-forms-config');
-
-            return;
-        }
-
-        info('Updating config file with selected features...');
-
-        $config = File::get($configPath);
-
-        // Build new features array string
-        $featuresArray = "[\n";
-        foreach ($selectedFeatures as $feature => $enabled) {
-            $status = $enabled ? 'true' : 'false';
-            $featuresArray .= "        '{$feature}' => {$status},\n";
-        }
-        $featuresArray .= '    ]';
-
-        // Replace features array in config file
-        $pattern = "/'features'\s*=>\s*\[.*?\]/s";
-        $replacement = "'features' => {$featuresArray}";
-        $config = preg_replace($pattern, $replacement, $config);
-
-        File::put($configPath, $config);
-
-        info('✓ Config file updated');
-    }
-
-    /**
-     * Sub-Phase 7.4: Display installation summary
+     * Display installation summary
      */
     protected function displaySummary(array $selectedFeatures): void
     {
