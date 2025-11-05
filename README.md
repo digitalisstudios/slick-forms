@@ -157,8 +157,13 @@ Get your first form running in under 2 minutes:
 # Install the package
 composer require digitalisstudios/slick-forms
 
-# Run migrations
-php artisan migrate
+# Run the interactive installation wizard
+php artisan slick-forms:install
+
+# The wizard will:
+# - Install core tables (forms, fields, submissions)
+# - Let you choose which features to enable (analytics, webhooks, email notifications, etc.)
+# - Update your config file automatically
 
 # (Optional) Seed with demo forms, templates, and fake analytics
 php artisan db:seed --class=DigitalisStudios\\SlickForms\\Database\\Seeders\\DemoFormsWithAnalyticsSeeder
@@ -171,6 +176,8 @@ open http://your-app.test/slick-forms/manage
 ```
 
 That's it! Start building forms immediately.
+
+> **Note:** Slick Forms v2.1+ uses an opt-in architecture. Only the features you select will have their database tables created. You can enable/disable features anytime by re-running `php artisan slick-forms:install`.
 
 ---
 
@@ -222,11 +229,33 @@ That's it! Start building forms immediately.
 composer require digitalisstudios/slick-forms
 ```
 
-### Run Migrations
+### Run Installation Wizard
 
 ```bash
+php artisan slick-forms:install
+```
+
+The interactive wizard will guide you through:
+1. **Core Tables Installation** - Always installed (forms, fields, submissions, analytics sessions/events)
+2. **Feature Selection** - Choose which features to enable:
+   - 📊 Analytics (tracking, dashboards, conversion funnels)
+   - 📧 Email Notifications (custom templates, conditional sending)
+   - 🔗 Webhooks (POST to external APIs with retry logic)
+   - 🔒 Spam Protection Logs (honeypot, rate limiting, CAPTCHA tracking)
+   - 📚 Form Versioning (snapshots, rollback, history)
+   - 📤 Exports (CSV, Excel, PDF)
+3. **Config Updates** - Automatically updates `config/slick-forms.php` with your selections
+
+**Re-running the wizard** lets you enable/disable features without losing data. Disabled features keep their tables but stop functioning.
+
+### Alternative: Manual Migration
+
+```bash
+# Run all migrations at once (installs ALL features)
 php artisan migrate
 ```
+
+This creates all 18 tables regardless of feature usage. Use the wizard for a leaner installation.
 
 ### Publish Configuration (Optional)
 
@@ -818,32 +847,48 @@ composer require barryvdh/laravel-dompdf
 
 ## Database Schema
 
-All tables use the `slick_` prefix to avoid conflicts:
+All tables use the `slick_` prefix to avoid conflicts.
 
-### Core Tables (v1.0)
+### Opt-In Architecture (v2.1+)
+
+Slick Forms uses a modular database structure where **only the features you enable create tables**. This reduces database bloat and improves performance.
+
+### Core Tables (Always Installed)
+These 9 tables are always created, regardless of feature selection:
+
 - `slick_forms` - Form definitions with settings and configuration
 - `slick_form_fields` - Form fields with validation and conditional logic
 - `slick_form_layout_elements` - Layout structure (containers, rows, columns, cards, tabs, accordions, carousels)
+- `slick_form_pages` - Multi-page form support with progress tracking
 - `slick_form_submissions` - User submissions with IP tracking and metadata
 - `slick_form_field_values` - Submitted field values
-- `slick_form_pages` - Multi-page form support with progress tracking
-
-### Analytics Tables (v1.0)
 - `slick_form_analytics_sessions` - User session tracking (device, browser, timing)
 - `slick_form_analytics_events` - Analytics events (views, starts, interactions, validations)
+- `slick_form_features` - Tracks which features are installed and enabled
 
-### Integration Tables (v2.0)
+### Optional Feature Tables
+These 9 tables are only created when you enable their corresponding features:
+
+**Email Notifications Feature:**
 - `slick_form_email_templates` - Email notification templates with variables
 - `slick_form_email_logs` - Email delivery tracking and status
+
+**Webhooks Feature:**
 - `slick_form_webhooks` - Webhook endpoint configurations
 - `slick_form_webhook_logs` - Webhook delivery attempts and responses
+
+**Spam Protection Feature:**
 - `slick_form_spam_logs` - Spam attempt logging with IP tracking
+
+**Versioning Feature:**
+- `slick_form_versions` - Form version snapshots and history
+
+**Exports Feature:**
 - `slick_dynamic_options_cache` - Cached dynamic dropdown options
 - `slick_form_model_bindings` - Form-to-Eloquent model mappings
 - `slick_form_signed_urls` - Signed URL tracking with expiration
-- `slick_form_versions` - Form version snapshots and history
 
-**Total:** 17 tables
+**Total:** 9 core tables + up to 9 optional tables (18 maximum)
 
 ---
 
