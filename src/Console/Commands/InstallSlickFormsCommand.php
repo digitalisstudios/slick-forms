@@ -100,12 +100,12 @@ class InstallSlickFormsCommand extends Command
         // Build all available options
         $allOptions = [];
         foreach ($this->featureMigrations as $feature => $config) {
-            $allOptions[$feature] = "{$feature} - {$config['description']}";
+            $allOptions[$feature] = $config['description'];
         }
 
         // Add dependency-based features
         foreach ($this->featureDependencies as $feature => $config) {
-            $allOptions[$feature] = "{$feature} - {$config['description']}";
+            $allOptions[$feature] = $config['description'];
         }
 
         // Get already enabled features and inform user
