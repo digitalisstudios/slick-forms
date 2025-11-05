@@ -51,8 +51,10 @@ class FormRenderer extends Component
         $this->form = CustomForm::with(['fields.children', 'layoutElements', 'pages', 'modelBinding'])->findOrFail($formId);
         $this->model = $model;
 
-        // Initialize analytics session
-        $this->initializeAnalyticsSession();
+        // Initialize analytics session if feature enabled
+        if (slick_forms_feature_enabled('analytics')) {
+            $this->initializeAnalyticsSession();
+        }
 
         if (! $this->form->is_active) {
             abort(404, 'This form is not currently active.');
@@ -613,6 +615,10 @@ class FormRenderer extends Component
 
     protected function initializeAnalyticsSession(): void
     {
+        if (! slick_forms_feature_enabled('analytics')) {
+            return;
+        }
+
         $session = SlickFormAnalyticsSession::create([
             'slick_form_id' => $this->form->id,
             'session_id' => session()->getId(),
@@ -629,6 +635,10 @@ class FormRenderer extends Component
 
     public function trackFormStart(): void
     {
+        if (! slick_forms_feature_enabled('analytics')) {
+            return;
+        }
+
         if ($this->analyticsSessionId && ! $this->analyticsStarted) {
             SlickFormAnalyticsSession::where('id', $this->analyticsSessionId)
                 ->update(['started_at' => now()]);
@@ -639,6 +649,10 @@ class FormRenderer extends Component
 
     public function trackFieldEvent(int $fieldId, string $eventType, ?string $eventData = null): void
     {
+        if (! slick_forms_feature_enabled('analytics')) {
+            return;
+        }
+
         if (! $this->analyticsSessionId) {
             return;
         }
@@ -658,6 +672,10 @@ class FormRenderer extends Component
 
     public function trackValidationError(int $fieldId, string $errorMessage): void
     {
+        if (! slick_forms_feature_enabled('analytics')) {
+            return;
+        }
+
         $this->trackFieldEvent($fieldId, 'validation_error', $errorMessage);
     }
 

@@ -227,7 +227,7 @@ class SpamProtectionService
     }
 
     /**
-     * Log spam attempt for analytics
+     * Log spam attempt for analytics (only if spam_logs feature enabled)
      *
      * @param  string  $ipAddress  Submitter IP address
      * @param  string  $method  Detection method: 'honeypot', 'recaptcha', 'hcaptcha', 'rate_limit'
@@ -239,6 +239,10 @@ class SpamProtectionService
         string $method,
         array $details = []
     ): void {
+        if (! slick_forms_feature_enabled('spam_logs')) {
+            return;
+        }
+
         FormSpamLog::create([
             'form_id' => $form->id,
             'ip_address' => $ipAddress,
