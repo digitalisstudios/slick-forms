@@ -11,6 +11,13 @@ class ManageStats extends Component
 
     public function render()
     {
+        // Don't render anything if analytics feature is disabled
+        if (! slick_forms_feature_enabled('analytics')) {
+            return <<<'HTML'
+            <div></div>
+            HTML;
+        }
+
         $analyticsService = app(FormAnalyticsService::class);
 
         $analytics = $analyticsService->getAllFormsSummary($this->days);
