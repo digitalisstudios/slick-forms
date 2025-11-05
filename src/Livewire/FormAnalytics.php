@@ -60,13 +60,10 @@ class FormAnalytics extends Component
     {
         // Don't render anything if analytics feature is disabled
         if (! slick_forms_feature_enabled('analytics')) {
-            return <<<'HTML'
-            <div class="alert alert-info">
-                <h4>Analytics Feature Not Enabled</h4>
-                <p>The analytics feature is currently disabled.</p>
-                <p>Run <code>php artisan slick-forms:install</code> to enable this feature.</p>
-            </div>
-            HTML;
+            return view('slick-forms::livewire.feature-disabled', [
+                'feature' => 'Analytics',
+                'message' => 'The analytics feature is currently disabled.',
+            ]);
         }
 
         return view('slick-forms::livewire.form-analytics');

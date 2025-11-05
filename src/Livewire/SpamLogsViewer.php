@@ -24,6 +24,8 @@ class SpamLogsViewer extends Component
     public function mount(int $formId): void
     {
         $this->form = CustomForm::findOrFail($formId);
+
+        // Feature check happens in render()
     }
 
     public function updatingSearchQuery(): void
@@ -94,6 +96,14 @@ class SpamLogsViewer extends Component
 
     public function render()
     {
+        // Don't render if spam logs feature is disabled
+        if (! slick_forms_feature_enabled('spam_logs')) {
+            return view('slick-forms::livewire.feature-disabled', [
+                'feature' => 'Spam Protection Logs',
+                'message' => 'The spam protection logging feature is currently disabled.',
+            ]);
+        }
+
         return view('slick-forms::livewire.spam-logs-viewer', [
             'logs' => $this->logs,
             'selectedLog' => $this->selectedLog,

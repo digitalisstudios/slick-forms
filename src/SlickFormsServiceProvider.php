@@ -105,6 +105,12 @@ class SlickFormsServiceProvider extends ServiceProvider
                 return new FormVersionService;
             });
         }
+
+        if (config('slick-forms.features.analytics', true)) {
+            $this->app->singleton(FormAnalyticsService::class, function ($app) {
+                return new FormAnalyticsService;
+            });
+        }
     }
 
     public function boot(): void

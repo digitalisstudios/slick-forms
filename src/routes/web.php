@@ -104,27 +104,31 @@ Route::prefix(config('slick-forms.routes.prefix'))
             ->middleware($config['middleware'])
             ->name('submissions.show');
 
-        // Submission Export Routes
-        $config = getRouteConfig('submissions', 'export_csv');
-        Route::get($config['uri'], [SubmissionExportController::class, 'csv'])
-            ->middleware($config['middleware'])
-            ->name('submissions.export.csv');
+        // Submission Export Routes (Only if exports feature enabled)
+        if (config('slick-forms.features.exports', true)) {
+            $config = getRouteConfig('submissions', 'export_csv');
+            Route::get($config['uri'], [SubmissionExportController::class, 'csv'])
+                ->middleware($config['middleware'])
+                ->name('submissions.export.csv');
 
-        $config = getRouteConfig('submissions', 'export_excel');
-        Route::get($config['uri'], [SubmissionExportController::class, 'excel'])
-            ->middleware($config['middleware'])
-            ->name('submissions.export.excel');
+            $config = getRouteConfig('submissions', 'export_excel');
+            Route::get($config['uri'], [SubmissionExportController::class, 'excel'])
+                ->middleware($config['middleware'])
+                ->name('submissions.export.excel');
 
-        $config = getRouteConfig('submissions', 'export_pdf');
-        Route::get($config['uri'], [SubmissionExportController::class, 'pdf'])
-            ->middleware($config['middleware'])
-            ->name('submissions.export.pdf');
+            $config = getRouteConfig('submissions', 'export_pdf');
+            Route::get($config['uri'], [SubmissionExportController::class, 'pdf'])
+                ->middleware($config['middleware'])
+                ->name('submissions.export.pdf');
+        }
 
-        // Analytics Routes
-        $config = getRouteConfig('analytics', 'show');
-        Route::get($config['uri'], [FormAnalyticsController::class, 'show'])
-            ->middleware($config['middleware'])
-            ->name('analytics.show');
+        // Analytics Routes (Only if analytics feature enabled)
+        if (config('slick-forms.features.analytics', true)) {
+            $config = getRouteConfig('analytics', 'show');
+            Route::get($config['uri'], [FormAnalyticsController::class, 'show'])
+                ->middleware($config['middleware'])
+                ->name('analytics.show');
+        }
 
         // Form Management Routes (CRUD)
         $config = getRouteConfig('manage', 'index');

@@ -14,7 +14,9 @@ class ManageStats extends Component
         // Don't render anything if analytics feature is disabled
         if (! slick_forms_feature_enabled('analytics')) {
             return <<<'HTML'
-            <div></div>
+            <div class="mb-4">
+                <!-- Analytics disabled, no dashboard shown -->
+            </div>
             HTML;
         }
 
