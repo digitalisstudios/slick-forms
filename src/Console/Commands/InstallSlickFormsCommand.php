@@ -84,7 +84,10 @@ class InstallSlickFormsCommand extends Command
         // Step 5: Update Config with Selected Features
         $this->updateConfig($selectedFeatures);
 
-        // Step 6: Display Summary
+        // Step 6: Data Seeding (Templates & Demo Forms)
+        $this->handleDataSeeding($selectedFeatures);
+
+        // Step 7: Display Summary
         $this->displaySummary($selectedFeatures);
 
         return self::SUCCESS;
@@ -298,6 +301,116 @@ class InstallSlickFormsCommand extends Command
         }
 
         return $statuses;
+    }
+
+    /**
+     * Check if templates exist and offer to seed data
+     */
+    protected function handleDataSeeding(array $selectedFeatures): void
+    {
+        // Check if slick_forms table exists (core tables must be installed first)
+        if (! Schema::hasTable('slick_forms')) {
+            return;
+        }
+
+        // Check if any templates exist
+        $templateCount = DB::table('slick_forms')
+            ->where('is_template', true)
+            ->count();
+
+        // If templates already exist, skip this step
+        if ($templateCount > 0) {
+            return;
+        }
+
+        $this->newLine();
+        info('📋 Optional Data Seeding');
+        $this->newLine();
+
+        // Ask if user wants to seed templates
+        $seedTemplates = confirm(
+            label: 'Would you like to seed form templates?',
+            default: true,
+            yes: 'Yes, seed templates',
+            no: 'No, skip',
+            hint: 'Templates provide pre-built forms like contact forms, surveys, and registration forms.'
+        );
+
+        if ($seedTemplates) {
+            $this->seedTemplates();
+        }
+
+        // If analytics feature is enabled and installed, offer to seed demo forms
+        $analyticsEnabled = $selectedFeatures['analytics'] ?? false;
+        $analyticsInstalled = $this->isFeatureInstalled('analytics');
+
+        if ($analyticsEnabled && $analyticsInstalled) {
+            $this->newLine();
+            $seedDemoForms = confirm(
+                label: 'Would you like to seed demo forms with analytics data?',
+                default: false,
+                yes: 'Yes, seed demo forms',
+                no: 'No, skip',
+                hint: 'Demo forms include sample submission data and analytics for testing.'
+            );
+
+            if ($seedDemoForms) {
+                $this->seedDemoForms();
+            }
+        }
+    }
+
+    /**
+     * Check if a feature is installed
+     */
+    protected function isFeatureInstalled(string $feature): bool
+    {
+        if (! Schema::hasTable('slick_form_features')) {
+            return false;
+        }
+
+        return DB::table('slick_form_features')
+            ->where('feature_name', $feature)
+            ->where('installed', true)
+            ->exists();
+    }
+
+    /**
+     * Seed form templates
+     */
+    protected function seedTemplates(): void
+    {
+        $this->newLine();
+        info('Seeding form templates...');
+
+        try {
+            $this->call('db:seed', [
+                '--class' => 'DigitalisStudios\\SlickForms\\Database\\Seeders\\FormTemplatesSeeder',
+            ]);
+
+            info('✓ Templates seeded successfully');
+        } catch (\Exception $e) {
+            warning('⚠ Failed to seed templates: '.$e->getMessage());
+        }
+    }
+
+    /**
+     * Seed demo forms with analytics data
+     */
+    protected function seedDemoForms(): void
+    {
+        $this->newLine();
+        info('Seeding demo forms with analytics...');
+
+        try {
+            $this->call('db:seed', [
+                '--class' => 'DigitalisStudios\\SlickForms\\Database\\Seeders\\DemoFormsWithAnalyticsSeeder',
+            ]);
+
+            info('✓ Demo forms seeded successfully');
+        } catch (\Exception $e) {
+            warning('⚠ Failed to seed demo forms: '.$e->getMessage());
+        }
     }
 
     /**
